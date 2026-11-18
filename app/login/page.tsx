@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label'
 import {
   Mail,
   Lock,
+  Eye,
+  EyeOff,
   AlertCircle,
   Sparkles,
   ArrowRight,
@@ -18,16 +20,22 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
-export default function LoginPage() {
+function LoginContent() {
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info'; text: string } | null>(null)
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null)
+
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextUrl = searchParams.get('next') || '/trips'
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
@@ -42,9 +50,18 @@ export default function LoginPage() {
       !key.includes('your_')
     )
     setIsConfigured(configured)
-  }, [])
 
-  async function handleMagicLinkLogin(e: React.FormEvent) {
+    // Check if user is already signed in
+    if (configured) {
+      supabase.auth.getUser().then(({ data }: any) => {
+        if (data?.user) {
+          router.replace(nextUrl)
+        }
+      })
+    }
+  }, [supabase, router, nextUrl])
+
+  async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setStatusMessage(null)
@@ -52,31 +69,90 @@ export default function LoginPage() {
     if (!isConfigured) {
       setStatusMessage({
         type: 'info',
-        text: 'Supabase credentials are not connected yet. You can explore as a Guest or provide your Supabase URL & Anon Key in .env.local.',
+        text: 'Supabase credentials are not connected yet. Please explore as a Guest or configure keys in .env.local.',
+      })
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Password must be at least 6 characters in length.',
       })
       setLoading(false)
       return
     }
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/new`,
-        },
-      })
-
-      if (error) {
-        setStatusMessage({ type: 'error', text: error.message })
-      } else {
-        setStatusMessage({
-          type: 'success',
-          text: '✦ Magic link sent! Please check your email inbox to complete sign in.',
+      if (authMode === 'signin') {
+        // Sign in with Email + Password
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         })
+
+        if (error) {
+          setStatusMessage({
+            type: 'error',
+            text: error.message.includes('Invalid login credentials')
+              ? 'Invalid email or password. Please verify your credentials or create a new account.'
+              : error.message,
+          })
+          setLoading(false)
+          return
+        }
+
+        if (data?.user) {
+          setStatusMessage({
+            type: 'success',
+            text: '✓ Access granted. Redirecting to your traveler dossier...',
+          })
+          setTimeout(() => {
+            router.push(nextUrl)
+            router.refresh()
+          }, 800)
+        }
+      } else {
+        // Sign up with Email + Password
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextUrl)}`,
+          },
+        })
+
+        if (error) {
+          setStatusMessage({ type: 'error', text: error.message })
+          setLoading(false)
+          return
+        }
+
+        if (data?.session) {
+          // If auto-confirm is enabled on Supabase
+          setStatusMessage({
+            type: 'success',
+            text: '✓ Account created successfully! Initializing your dossier...',
+          })
+          setTimeout(() => {
+            router.push(nextUrl)
+            router.refresh()
+          }, 800)
+        } else if (data?.user) {
+          // If email confirmation is required
+          setStatusMessage({
+            type: 'success',
+            text: '✦ Account created! A confirmation link has been sent to your email. You can also sign in directly once confirmed.',
+          })
+          setLoading(false)
+        }
       }
     } catch (err: any) {
-      setStatusMessage({ type: 'error', text: err?.message || 'Failed to authenticate.' })
-    } finally {
+      setStatusMessage({
+        type: 'error',
+        text: err?.message || 'Authentication encountered an unexpected error.',
+      })
       setLoading(false)
     }
   }
@@ -94,7 +170,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/new`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextUrl)}`,
         },
       })
       if (error) {
@@ -108,7 +184,7 @@ export default function LoginPage() {
   return (
     <div className='min-h-screen bg-[#0a0a0a] text-white flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden'>
       {/* Background radial gold glow */}
-      <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-primary/10 rounded-full blur-[120px] pointer-events-none' />
+      <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[380px] bg-primary/10 rounded-full blur-[130px] pointer-events-none' />
 
       <div className='w-full max-w-md relative z-10 space-y-6'>
         
@@ -141,13 +217,49 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* Card */}
+        {/* Main Card */}
         <div className='rounded-3xl border border-white/10 glass-strong p-8 shadow-2xl gold-glow space-y-6'>
           
+          {/* Sign In vs Sign Up Tabs */}
+          <div className='flex items-center p-1 rounded-2xl bg-black/60 border border-white/10'>
+            <button
+              type='button'
+              onClick={() => {
+                setAuthMode('signin')
+                setStatusMessage(null)
+              }}
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${
+                authMode === 'signin'
+                  ? 'bg-primary text-black shadow-md'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type='button'
+              onClick={() => {
+                setAuthMode('signup')
+                setStatusMessage(null)
+              }}
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${
+                authMode === 'signup'
+                  ? 'bg-primary text-black shadow-md'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
+
           <div className='space-y-1'>
-            <h2 className='text-xl font-serif font-bold text-white'>Sign In to Your Dossier</h2>
+            <h2 className='text-xl font-serif font-bold text-white'>
+              {authMode === 'signin' ? 'Access Your Traveler Dossier' : 'Join Roamio Private Club'}
+            </h2>
             <p className='text-xs text-gray-400'>
-              Sync saved trips, custom routes, and budget estimates across all devices.
+              {authMode === 'signin'
+                ? 'Sign in with your email and password to sync your itineraries.'
+                : 'Create your account to store trips, routes, and custom budgets.'}
             </p>
           </div>
 
@@ -171,12 +283,14 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleMagicLinkLogin} className='space-y-4'>
+          {/* Email + Password Form */}
+          <form onSubmit={handleEmailAuth} className='space-y-4'>
+            
+            {/* Email Field */}
             <div className='space-y-2'>
               <Label htmlFor='email' className='text-xs font-mono text-gray-300 flex items-center justify-between'>
-                <span>Traveler Email Address</span>
-                <span className='text-[10px] text-gray-500'>Passwordless Magic Link</span>
+                <span>Email Address</span>
+                <span className='text-[10px] text-gray-500'>Stored in Supabase Auth</span>
               </Label>
               <div className='relative'>
                 <Mail className='w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
@@ -193,19 +307,55 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Password Field */}
+            <div className='space-y-2'>
+              <Label htmlFor='password' className='text-xs font-mono text-gray-300 flex items-center justify-between'>
+                <span>Password</span>
+                {authMode === 'signup' && (
+                  <span className='text-[10px] text-primary/80'>Min 6 characters</span>
+                )}
+              </Label>
+              <div className='relative'>
+                <Lock className='w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
+                <Input
+                  id='password'
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder='••••••••••••'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className='pl-10 pr-10 h-11 bg-black/50 border-white/15 text-white placeholder:text-gray-600 focus:border-primary rounded-xl text-sm'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors cursor-pointer'
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className='w-4 h-4' />
+                  ) : (
+                    <Eye className='w-4 h-4' />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
             <Button
               type='submit'
               disabled={loading}
-              className='w-full h-11 bg-primary text-black font-semibold text-sm rounded-xl gold-glow hover:bg-primary/90 transition-all cursor-pointer flex items-center justify-center gap-2'
+              className='w-full h-11 bg-primary text-black font-semibold text-sm rounded-xl gold-glow hover:bg-primary/90 transition-all cursor-pointer flex items-center justify-center gap-2 mt-2'
             >
               {loading ? (
                 <div className='flex items-center gap-2'>
                   <div className='w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin' />
-                  <span>Transmitting Link...</span>
+                  <span>{authMode === 'signin' ? 'Authenticating...' : 'Creating Account...'}</span>
                 </div>
               ) : (
                 <>
-                  <span>Send Passwordless Magic Link</span>
+                  <span>{authMode === 'signin' ? 'Sign In to Dossier' : 'Create Free Account'}</span>
                   <ArrowRight className='w-4 h-4' />
                 </>
               )}
@@ -216,7 +366,7 @@ export default function LoginPage() {
           <div className='relative flex items-center justify-center'>
             <div className='border-t border-white/10 w-full' />
             <span className='bg-[#121212] px-3 font-mono text-[10px] uppercase text-gray-500 tracking-wider absolute'>
-              or
+              or continue with
             </span>
           </div>
 
@@ -250,7 +400,7 @@ export default function LoginPage() {
           {/* Guest Mode Direct Access */}
           <div className='pt-2 text-center'>
             <Link
-              href='/new'
+              href={nextUrl}
               className='text-xs font-mono text-primary/80 hover:text-primary transition-colors flex items-center justify-center gap-1.5'
             >
               <span>Continue as Guest without account</span>
@@ -278,5 +428,19 @@ export default function LoginPage() {
 
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className='min-h-screen bg-[#0a0a0a] flex items-center justify-center text-primary font-mono text-sm'>
+          Loading authentication gateway...
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   )
 }
