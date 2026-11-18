@@ -59,6 +59,35 @@ const DEFAULT_DEMO_TRIP: SavedTrip = {
   created_at: new Date().toISOString(),
 }
 
+const ATELIER_EXPEDITIONS = [
+  {
+    id: 'kerala-masterpiece',
+    title: 'Monsoon Waters & Heritage Shikaras',
+    destination: 'Alleppey & Marari, Kerala',
+    dates: 'Dec 10 – Dec 14, 2026',
+    budget_inr: 45000,
+    party: '2 Adults',
+    interests: ['Backwaters', 'Ayurveda', 'Coastal Feast'],
+    photo: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
+    tag: 'Masterpiece Expedition',
+    days: 4,
+    pace: 'Unhurried Pace',
+  },
+  {
+    id: 'udaipur-masterpiece',
+    title: 'Marble Palaces & Lake Pichola Twilight',
+    destination: 'Udaipur, Rajasthan',
+    dates: 'Dec 18 – Dec 21, 2026',
+    budget_inr: 65000,
+    party: '2 Adults',
+    interests: ['Royal Stays', 'Sunset Cruise', 'Courtyard Dining'],
+    photo: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=800&q=80',
+    tag: 'Palace Experiential',
+    days: 3,
+    pace: 'Balanced & Curated',
+  },
+]
+
 export default function MyTripsPage() {
   const [trips, setTrips] = useState<SavedTrip[]>([])
   const [loading, setLoading] = useState(true)
@@ -337,6 +366,84 @@ export default function MyTripsPage() {
           })}
         </div>
       )}
+
+      {/* CURATED MASTERPIECE EXPEDITIONS GALLERY */}
+      <div className='pt-12 border-t border-white/10 space-y-6'>
+        <div className='flex items-center justify-between'>
+          <div>
+            <span className='text-xs font-mono uppercase tracking-widest text-primary font-bold flex items-center gap-1.5'>
+              ✦ Curated Atelier Collections
+            </span>
+            <h2 className='font-serif text-2xl font-bold text-white mt-1'>
+              Masterpiece Domestic Expeditions
+            </h2>
+            <p className='text-xs text-gray-400 mt-0.5'>
+              Pre-choreographed itineraries with verified Google Places timings, authentic thali reservations & private transit.
+            </p>
+          </div>
+        </div>
+
+        <div className='grid md:grid-cols-2 gap-6'>
+          {ATELIER_EXPEDITIONS.map((exp) => (
+            <div
+              key={exp.id}
+              className='group rounded-3xl border border-[rgba(212,165,116,0.2)] glass-strong overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-2xl flex flex-col sm:flex-row'
+            >
+              <div className='relative sm:w-52 h-44 sm:h-auto overflow-hidden bg-black/60 flex-shrink-0'>
+                <Image
+                  src={exp.photo}
+                  alt={exp.destination}
+                  fill
+                  className='object-cover group-hover:scale-105 transition-transform duration-700'
+                />
+                <div className='absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#161410] via-black/30 to-transparent' />
+                <div className='absolute top-3 left-3 z-10'>
+                  <span className='px-2.5 py-0.5 rounded-full stamp-badge text-[10px] font-mono font-bold text-primary'>
+                    {exp.tag}
+                  </span>
+                </div>
+              </div>
+
+              <div className='p-6 flex-1 flex flex-col justify-between space-y-3'>
+                <div>
+                  <div className='flex items-center justify-between text-xs font-mono text-gray-400'>
+                    <span className='text-primary flex items-center gap-1 font-bold'>
+                      <MapPin className='w-3.5 h-3.5' /> {exp.destination}
+                    </span>
+                    <span className='text-[10px]'>{exp.days} Days · {exp.pace}</span>
+                  </div>
+                  <h3 className='font-serif text-xl font-bold text-white group-hover:text-gold-shine transition-colors mt-1 leading-snug'>
+                    {exp.title}
+                  </h3>
+                </div>
+
+                <div className='grid grid-cols-2 gap-2 pt-2 border-t border-white/10 font-mono text-xs'>
+                  <div>
+                    <span className='text-[10px] text-gray-500 block uppercase'>Curated Budget</span>
+                    <span className='font-serif text-base font-bold text-emerald-400 block mt-0.5'>
+                      ₹{exp.budget_inr.toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className='text-[10px] text-gray-500 block uppercase'>Party</span>
+                    <span className='text-gray-200 block mt-0.5'>{exp.party}</span>
+                  </div>
+                </div>
+
+                <div className='pt-2'>
+                  <Link
+                    href={`/new?dest=${encodeURIComponent(exp.destination)}`}
+                    className='w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary text-primary hover:text-black border border-primary/40 font-semibold text-xs transition-all'
+                  >
+                    <span>Customize This Expedition</span>
+                    <ArrowRight className='w-3.5 h-3.5' />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
     </div>
   )
