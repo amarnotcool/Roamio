@@ -21,9 +21,13 @@ import {
   Printer,
   Compass,
   Navigation,
+  ArrowLeftRight,
+  RotateCcw,
+  Check,
 } from 'lucide-react'
 import Link from 'next/link'
 import { Activity, DayPlan } from '@/lib/types'
+import ActivitySwapModal from '@/components/itinerary/ActivitySwapModal'
 
 // Dynamic import with SSR disabled for Leaflet Map
 const TripRouteMap = dynamic(() => import('@/components/map/TripRouteMap'), {
@@ -206,6 +210,13 @@ export default function TripDetailPage() {
   const [loading, setLoading] = useState(true)
   const [activeDayTab, setActiveDayTab] = useState('1')
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null)
+
+  // Swap Engine States
+  const [swapModalOpen, setSwapModalOpen] = useState(false)
+  const [swappingActivity, setSwappingActivity] = useState<Activity | null>(null)
+  const [swappingDayNumber, setSwappingDayNumber] = useState<number>(1)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+
   const supabase = createClient()
 
   useEffect(() => {
@@ -254,6 +265,88 @@ export default function TripDetailPage() {
     setTrip(DEFAULT_SAMPLE_TRIP)
     setItinerary(DEFAULT_SAMPLE_ITINERARY)
     setLoading(false)
+  }
+
+  function saveUpdatedItinerary(newItinerary: DayPlan[]) {
+    if (typeof window !== 'undefined' && trip) {
+      const updatedTrip = {
+        ...trip,
+        itinerary: newItinerary,
+      }
+      sessionStorage.setItem('roamio_trip_' + trip.id, JSON.stringify(updatedTrip))
+    }
+  }
+
+  function handleSwapActivity(dayNum: number, oldActivityId: string, newActivity: Activity) {
+    setItinerary((prev) => {
+      const updated = prev.map((day) => {
+        if (day.dayNumber === dayNum) {
+          return {
+            ...day,
+            activities: day.activities.map((act) =>
+              act.placeId === oldActivityId ? newActivity : act
+            ),
+          }
+        }
+        return day
+      })
+
+      saveUpdatedItinerary(updated)
+      return updated
+    })
+
+    setSelectedActivityId(newActivity.placeId)
+    setToastMessage(`✓ Swapped stop with ${newActivity.placeName}`)
+    setTimeout(() => setToastMessage(null), 4000)
+  }
+
+  async function handleRegenerateDay(dayNum: number) {
+    if (!trip) return
+
+    try {
+      setToastMessage(`Regenerating Day 0${dayNum} with fresh curated stops...`)
+      const res = await fetch('/api/swap-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destination: trip.destination,
+          intent: 'all',
+        }),
+      })
+
+      const data = await res.json()
+      if (data.alternatives && data.alternatives.length >= 2) {
+        const alt1 = data.alternatives[0]
+        const alt2 = data.alternatives[1]
+
+        setItinerary((prev) => {
+          const updated = prev.map((day) => {
+            if (day.dayNumber === dayNum) {
+              const acts = day.activities.map((oldAct, idx) => {
+                const fresh = idx === 0 ? alt1 : alt2
+                return {
+                  ...fresh,
+                  sequence: oldAct.sequence,
+                  startTime: oldAct.startTime,
+                  endTime: oldAct.endTime,
+                }
+              })
+              return { ...day, activities: acts }
+            }
+            return day
+          })
+
+          saveUpdatedItinerary(updated)
+          return updated
+        })
+
+        setToastMessage(`✓ Day 0${dayNum} regenerated with fresh verified places!`)
+        setTimeout(() => setToastMessage(null), 4000)
+      }
+    } catch {
+      setToastMessage(`Failed to regenerate Day 0${dayNum}`)
+      setTimeout(() => setToastMessage(null), 3000)
+    }
   }
 
   function getTotalCost() {
@@ -413,7 +506,7 @@ export default function TripDetailPage() {
               Day-by-Day <span className='text-gold-shine'>Journey & Map</span>
             </h2>
             <p className='text-xs font-mono text-gray-400 mt-1'>
-              Select a day tab to trace its geo-route and timed stops.
+              Click "Swap Stop" to customize any place or rebalance pacing.
             </p>
           </div>
           <span className='font-mono text-xs text-gray-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/10'>
@@ -458,8 +551,21 @@ export default function TripDetailPage() {
                         </p>
                       </div>
                     </div>
+
+                    <div className='flex items-center gap-3'>
+                      <button
+                        type='button'
+                        onClick={() => handleRegenerateDay(day.dayNumber)}
+                        className='px-3.5 py-1.5 rounded-full glass border border-primary/30 hover:bg-primary/20 text-primary text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer'
+                        title='Regenerate this day with fresh curated places'
+                      >
+                        <RotateCcw className='w-3 h-3' />
+                        <span>Regenerate Day</span>
+                      </button>
+                    </div>
+
                     {day.notes && (
-                      <p className='text-xs font-sans text-gray-300 italic max-w-md'>
+                      <p className='w-full text-xs font-sans text-gray-300 italic pt-2 border-t border-white/5'>
                         "{day.notes}"
                       </p>
                     )}
@@ -529,12 +635,30 @@ export default function TripDetailPage() {
                               )}
                             </div>
 
-                            {/* Card Footer with ₹ Cost & Booking */}
+                            {/* Card Footer with ₹ Cost, Swap, Pin, Maps & Booking */}
                             <div className='pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono'>
                               <span className='text-white font-bold'>
                                 Est. Cost: ₹{activity.costEstimateINR?.toLocaleString() || 'Free'}
                               </span>
-                              <div className='flex items-center gap-2'>
+                              
+                              <div className='flex flex-wrap items-center gap-2'>
+                                {/* Swap Stop Trigger Button */}
+                                <button
+                                  type='button'
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setSwappingActivity(activity)
+                                    setSwappingDayNumber(day.dayNumber)
+                                    setSwapModalOpen(true)
+                                  }}
+                                  className='px-3.5 py-1.5 rounded-full glass border border-amber-500/40 hover:bg-amber-500/20 text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer gold-glow'
+                                  title='Customize or swap this activity'
+                                >
+                                  <ArrowLeftRight className='w-3 h-3 text-amber-400' />
+                                  <span>Swap Stop</span>
+                                </button>
+
+                                {/* Pin on Map Trigger Button */}
                                 <button
                                   type='button'
                                   onClick={(e) => {
@@ -544,27 +668,29 @@ export default function TripDetailPage() {
                                   className='px-3 py-1.5 rounded-full glass border border-primary/40 hover:bg-primary/20 text-primary flex items-center gap-1 transition-colors'
                                 >
                                   <Navigation className='w-3 h-3' />
-                                  <span>Pin on Map</span>
+                                  <span>Pin</span>
                                 </button>
+
                                 <a
                                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.placeName + ' ' + activity.address)}`}
                                   target='_blank'
                                   rel='noopener noreferrer'
                                   onClick={(e) => e.stopPropagation()}
-                                  className='px-3.5 py-1.5 rounded-full glass border border-white/20 hover:border-primary text-gray-300 flex items-center gap-1 transition-colors'
+                                  className='px-3 py-1.5 rounded-full glass border border-white/20 hover:border-primary text-gray-300 flex items-center gap-1 transition-colors'
                                 >
                                   <span>Maps</span>
                                   <ExternalLink className='w-3 h-3' />
                                 </a>
+
                                 <button
                                   type='button'
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     alert(`Redirecting to verified partner booking for ${activity.placeName}`)
                                   }}
-                                  className='px-4 py-1.5 rounded-full bg-primary text-black font-bold flex items-center gap-1 shadow-md hover:bg-primary/90 transition-colors gold-glow'
+                                  className='px-3.5 py-1.5 rounded-full bg-primary text-black font-bold flex items-center gap-1 shadow-md hover:bg-primary/90 transition-colors gold-glow'
                                 >
-                                  <span>Book Fast-Track</span>
+                                  <span>Book</span>
                                   <ExternalLink className='w-3 h-3' />
                                 </button>
                               </div>
@@ -612,6 +738,24 @@ export default function TripDetailPage() {
 
         </Tabs>
       </div>
+
+      {/* Activity Swap & Customization Modal */}
+      <ActivitySwapModal
+        isOpen={swapModalOpen}
+        onClose={() => setSwapModalOpen(false)}
+        destination={trip.destination}
+        dayNumber={swappingDayNumber}
+        currentActivity={swappingActivity}
+        onSwap={handleSwapActivity}
+      />
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className='fixed bottom-8 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 rounded-full bg-primary text-black font-semibold text-xs sm:text-sm shadow-2xl gold-glow-strong animate-in fade-in slide-in-from-bottom-4 flex items-center gap-2'>
+          <Sparkles className='w-4 h-4' />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
     </div>
   )
