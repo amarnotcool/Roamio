@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Plus, LogOut, Compass, Sparkles } from 'lucide-react'
+import { Plus, LogOut, Compass, Sparkles, MapPin } from 'lucide-react'
 
 type User = {
   id: string
@@ -47,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navItems = [
     { href: '/', label: 'Explore', icon: Compass },
+    { href: '/trips', label: 'My Trips', icon: MapPin },
     { href: '/new', label: 'Plan Trip', icon: Plus },
   ]
 

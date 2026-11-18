@@ -267,13 +267,45 @@ export default function TripDetailPage() {
     setLoading(false)
   }
 
-  function saveUpdatedItinerary(newItinerary: DayPlan[]) {
+  async function saveUpdatedItinerary(newItinerary: DayPlan[]) {
     if (typeof window !== 'undefined' && trip) {
       const updatedTrip = {
         ...trip,
         itinerary: newItinerary,
       }
       sessionStorage.setItem('roamio_trip_' + trip.id, JSON.stringify(updatedTrip))
+
+      // Update local storage for guest dashboard
+      try {
+        const localData = localStorage.getItem('roamio_guest_trips')
+        if (localData) {
+          const parsed = JSON.parse(localData)
+          const updatedList = parsed.map((t: any) => (t.id === trip.id ? updatedTrip : t))
+          localStorage.setItem('roamio_guest_trips', JSON.stringify(updatedList))
+        }
+      } catch (err) {
+        console.error('Local cache error:', err)
+      }
+    }
+
+    // Sync to Supabase if connected and trip is saved in cloud
+    if (trip?.id && !trip.id.startsWith('guest_') && trip.id !== 'sample') {
+      try {
+        for (const day of newItinerary) {
+          await supabase
+            .from('itineraries')
+            .upsert({
+              trip_id: trip.id,
+              day_number: day.dayNumber,
+              date: day.date,
+              activities: day.activities,
+              transport: day.transport,
+              notes: day.notes,
+            }, { onConflict: 'trip_id,day_number' })
+        }
+      } catch (e) {
+        console.error('Failed to sync updated itinerary to Supabase:', e)
+      }
     }
   }
 

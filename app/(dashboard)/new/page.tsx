@@ -274,6 +274,10 @@ function TripStudioContent() {
           itinerary: result.itinerary.dayPlans,
         }
         sessionStorage.setItem('roamio_trip_' + tripId, JSON.stringify(guestTrip))
+        try {
+          const stored = JSON.parse(localStorage.getItem('roamio_guest_trips') || '[]')
+          localStorage.setItem('roamio_guest_trips', JSON.stringify([guestTrip, ...stored.filter((t: any) => t.id !== tripId)]))
+        } catch {}
       }
 
       router.push(`/trips/${tripId}`)
