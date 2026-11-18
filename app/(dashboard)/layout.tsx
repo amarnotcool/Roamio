@@ -52,22 +52,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ]
 
   return (
-    <div className='min-h-screen bg-[#0a0a0a] text-[#f5f5f5] flex flex-col selection:bg-[#d4a574]/30 selection:text-white'>
+    <div className='min-h-screen bg-[#0e0d0b] text-[#fbf5ee] flex flex-col selection:bg-[#d4a574]/30 selection:text-white'>
       
-      {/* Luxury Dark Header */}
-      <header className='sticky top-0 z-50 w-full border-b border-white/10 bg-black/75 backdrop-blur-md'>
+      {/* Luxury Editorial Header */}
+      <header className='sticky top-0 z-50 w-full border-b border-[rgba(212,165,116,0.12)] bg-[#0e0d0b]/85 backdrop-blur-xl'>
         <div className='max-w-7xl mx-auto px-4 sm:px-8'>
           <div className='flex h-20 items-center justify-between'>
             
             {/* Brand */}
             <Link href='/' className='flex items-center gap-2 group'>
-              <span className='font-serif text-3xl font-bold tracking-wide text-gold-shine hover:opacity-90 transition-opacity'>
+              <span className='font-serif text-3xl font-bold tracking-wide text-gold-shine group-hover:opacity-90 transition-opacity'>
                 Roamio
               </span>
             </Link>
 
             {/* Nav Items */}
-            <nav className='flex items-center gap-2 sm:gap-4'>
+            <nav className='flex items-center gap-2 sm:gap-3 p-1 rounded-full bg-[#161410]/70 border border-white/10'>
               {navItems.map((item) => {
                 const isActive = pathname === item.href
                 return (
@@ -77,10 +77,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
                       isActive
                         ? 'bg-primary text-black font-semibold shadow-md gold-glow'
-                        : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
+                        : 'text-gray-300 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <item.icon className='w-4 h-4' />
+                    <item.icon className='w-3.5 h-3.5' />
                     {item.label}
                   </Link>
                 )

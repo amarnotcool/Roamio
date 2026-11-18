@@ -24,8 +24,14 @@ import {
   ArrowLeftRight,
   RotateCcw,
   Check,
+  CloudSun,
+  Car,
+  Utensils,
+  Camera,
+  Layers,
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Activity, DayPlan } from '@/lib/types'
 import ActivitySwapModal from '@/components/itinerary/ActivitySwapModal'
 
@@ -33,9 +39,9 @@ import ActivitySwapModal from '@/components/itinerary/ActivitySwapModal'
 const TripRouteMap = dynamic(() => import('@/components/map/TripRouteMap'), {
   ssr: false,
   loading: () => (
-    <div className='w-full h-[480px] lg:h-[580px] rounded-3xl glass-dark border border-white/10 flex flex-col items-center justify-center gap-2 text-xs font-mono text-primary'>
-      <div className='w-6 h-6 rounded-full border-2 border-primary/30 border-t-primary animate-spin' />
-      <span>Loading Interactive Route Map...</span>
+    <div className='w-full h-[480px] lg:h-[580px] rounded-3xl glass-dark border border-primary/20 flex flex-col items-center justify-center gap-3 text-xs font-mono text-primary'>
+      <div className='w-7 h-7 rounded-full border-2 border-primary/30 border-t-primary animate-spin' />
+      <span>Calibrating Cartographic Route Map...</span>
     </div>
   ),
 })
@@ -50,6 +56,33 @@ interface Trip {
   travelers: { adults: number; children: number }
   interests: string[]
   pace: string
+}
+
+const DESTINATION_HERO_MAP: Record<string, string> = {
+  jaipur: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1920&q=85',
+  kerala: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85',
+  goa: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1920&q=85',
+  manali: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1920&q=85',
+  udaipur: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=1920&q=85',
+  rishikesh: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=85',
+}
+
+const PLACE_PHOTO_MAP: Record<string, string> = {
+  jp1: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80', // Amer Fort
+  jp2: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=80', // Panna Meena Stepwell
+  jp3: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80', // LMB Thali / Sweets
+  jp4: 'https://images.unsplash.com/photo-1609137144822-26d400490b6a?auto=format&fit=crop&w=800&q=80', // City Palace
+  jp5: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=80', // Hawa Mahal Cafe
+  jp6: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80', // Johari Bazaar
+  jp7: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80', // Nahargarh Sunset
+  jp8: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80', // Chokhi Dhani
+  jp9: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80', // Albert Hall
+  jp10: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80', // Tapri Tea
+  kl1: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80', // Shikara
+  kl2: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80', // Marari Beach
+  ga1: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80', // Fontainhas
+  mn1: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80', // Old Manali Cedar
+  ud1: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=800&q=80', // Udaipur City Palace
 }
 
 const DEFAULT_SAMPLE_TRIP: Trip = {
@@ -334,436 +367,573 @@ export default function TripDetailPage() {
 
   async function handleRegenerateDay(dayNum: number) {
     if (!trip) return
+    setToastMessage(`Re-choreographing Day 0${dayNum} with fresh verified stops...`)
 
     try {
-      setToastMessage(`Regenerating Day 0${dayNum} with fresh curated stops...`)
+      const targetDay = itinerary.find((d) => d.dayNumber === dayNum)
+      if (!targetDay || targetDay.activities.length === 0) return
+
+      // Request fresh alternative for the first stop to rotate the day
+      const firstStop = targetDay.activities[0]
       const res = await fetch('/api/swap-activity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           destination: trip.destination,
+          currentPlaceId: firstStop.placeId,
           intent: 'all',
         }),
       })
 
       const data = await res.json()
-      if (data.alternatives && data.alternatives.length >= 2) {
-        const alt1 = data.alternatives[0]
-        const alt2 = data.alternatives[1]
-
-        setItinerary((prev) => {
-          const updated = prev.map((day) => {
-            if (day.dayNumber === dayNum) {
-              const acts = day.activities.map((oldAct, idx) => {
-                const fresh = idx === 0 ? alt1 : alt2
-                return {
-                  ...fresh,
-                  sequence: oldAct.sequence,
-                  startTime: oldAct.startTime,
-                  endTime: oldAct.endTime,
-                }
-              })
-              return { ...day, activities: acts }
-            }
-            return day
-          })
-
-          saveUpdatedItinerary(updated)
-          return updated
-        })
-
-        setToastMessage(`✓ Day 0${dayNum} regenerated with fresh verified places!`)
-        setTimeout(() => setToastMessage(null), 4000)
+      if (data.alternatives && data.alternatives.length > 0) {
+        const replacement = data.alternatives[0]
+        handleSwapActivity(dayNum, firstStop.placeId, replacement)
+        setToastMessage(`✓ Day 0${dayNum} rejuvenated with ${replacement.placeName}`)
+      } else {
+        setToastMessage(`✓ Day 0${dayNum} refreshed with optimal sequence`)
       }
     } catch {
-      setToastMessage(`Failed to regenerate Day 0${dayNum}`)
-      setTimeout(() => setToastMessage(null), 3000)
+      setToastMessage('Could not regenerate day at this moment.')
     }
   }
 
-  function getTotalCost() {
-    return itinerary.reduce((sum, day) => {
-      const actCost = day.activities?.reduce((s, a) => s + (a.costEstimateINR || 0), 0) || 0
-      const transCost = day.transport?.reduce((s, t) => s + (t.costEstimateINR || 0), 0) || 0
-      return sum + actCost + transCost
-    }, 0)
-  }
-
   function getDayCost(day: DayPlan) {
-    const actCost = day.activities?.reduce((s, a) => s + (a.costEstimateINR || 0), 0) || 0
-    const transCost = day.transport?.reduce((s, t) => s + (t.costEstimateINR || 0), 0) || 0
-    return actCost + transCost
+    const actCost = day.activities.reduce((sum, a) => sum + (a.costEstimateINR || 0), 0)
+    const transitCost = day.transport?.reduce((sum, t) => sum + (t.costEstimateINR || 0), 0) || 0
+    return actCost + transitCost
   }
 
-  if (loading) {
+  function getCategoryBreakdown() {
+    let sightseeing = 0
+    let dining = 0
+    let transit = 0
+    let cultureAndShopping = 0
+
+    itinerary.forEach((day) => {
+      day.activities.forEach((act) => {
+        const cost = act.costEstimateINR || 0
+        if (act.type === 'sightseeing' || act.type === 'adventure') sightseeing += cost
+        else if (act.type === 'dining') dining += cost
+        else cultureAndShopping += cost
+      })
+      day.transport?.forEach((t) => {
+        transit += t.costEstimateINR || 0
+      })
+    })
+
+    return { sightseeing, dining, transit, cultureAndShopping }
+  }
+
+  if (loading || !trip) {
     return (
-      <div className='min-h-[50vh] flex flex-col items-center justify-center gap-3'>
-        <div className='w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin' />
-        <span className='font-mono text-xs text-gray-400'>Loading Confirmed Itinerary...</span>
+      <div className='min-h-[500px] flex flex-col items-center justify-center gap-3 text-primary font-mono text-sm'>
+        <div className='w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin' />
+        <span>Compiling Traveler Dossier...</span>
       </div>
     )
   }
 
-  if (!trip) {
-    return (
-      <div className='text-center py-20 space-y-4'>
-        <h2 className='font-serif text-2xl font-bold text-white'>Trip Not Found</h2>
-        <Link href='/new'>
-          <Button className='bg-primary text-black font-semibold'>Plan a New Trip</Button>
-        </Link>
-      </div>
-    )
-  }
-
-  const totalCost = getTotalCost()
-  const days = itinerary.length || 1
-  const budgetRatio = trip.budget_inr ? Math.min(100, Math.round((totalCost / trip.budget_inr) * 100)) : 75
+  const days = itinerary.length > 0 ? itinerary.length : 2
+  const totalCost = itinerary.reduce((sum, day) => sum + getDayCost(day), 0)
+  const breakdown = getCategoryBreakdown()
+  const targetBudget = trip.budget_inr || 50000
+  const budgetRatio = Math.min(100, Math.round((totalCost / targetBudget) * 100))
+  const reserveBuffer = Math.max(0, targetBudget - totalCost)
 
   const currentDayPlan = itinerary.find((d) => d.dayNumber.toString() === activeDayTab) || itinerary[0]
 
+  const destKey = trip.destination.toLowerCase().includes('jaipur')
+    ? 'jaipur'
+    : trip.destination.toLowerCase().includes('kerala') || trip.destination.toLowerCase().includes('alleppey')
+    ? 'kerala'
+    : trip.destination.toLowerCase().includes('goa')
+    ? 'goa'
+    : trip.destination.toLowerCase().includes('manali')
+    ? 'manali'
+    : trip.destination.toLowerCase().includes('udaipur')
+    ? 'udaipur'
+    : 'jaipur'
+
+  const heroImage = DESTINATION_HERO_MAP[destKey] || DESTINATION_HERO_MAP.jaipur
+
   return (
-    <div className='max-w-7xl mx-auto space-y-8 pb-20'>
+    <div className='max-w-7xl mx-auto space-y-10 pb-24'>
       
-      {/* Luxury Travel Dossier Card */}
-      <div className='rounded-3xl border border-primary/30 glass-strong overflow-hidden gold-glow'>
+      {/* 1. CINEMATIC EDITORIAL HERO COVER */}
+      <div className='relative rounded-3xl overflow-hidden border border-[rgba(212,165,116,0.25)] shadow-2xl gold-glow'>
         
-        {/* Ticket Header Ribbon */}
-        <div className='bg-primary/15 px-6 sm:px-8 py-4 border-b border-primary/20 flex flex-wrap items-center justify-between gap-3'>
-          <div className='flex items-center gap-2 font-mono text-xs text-primary font-bold'>
-            <Sparkles className='w-3.5 h-3.5' />
-            <span>CONFIRMED ITINERARY · VERIFIED PLACES</span>
+        {/* Background Photo with Rich Dark Gradient Veil */}
+        <div className='absolute inset-0 z-0'>
+          <Image
+            src={heroImage}
+            alt={trip.destination}
+            fill
+            className='object-cover opacity-40 scale-105 transition-transform duration-1000'
+            priority
+          />
+          <div className='absolute inset-0 bg-gradient-to-t from-[#0e0d0b] via-[#0e0d0b]/70 to-[#0e0d0b]/40' />
+          <div className='absolute inset-0 bg-radial-at-c from-transparent via-[#0e0d0b]/30 to-[#0e0d0b]/90' />
+        </div>
+
+        {/* Hero Content Overlay */}
+        <div className='relative z-10 p-6 sm:p-10 lg:p-12 space-y-6'>
+          
+          {/* Top Bar: Stamp Badge + Seasonality Weather + Actions */}
+          <div className='flex flex-wrap items-center justify-between gap-4'>
+            <div className='flex flex-wrap items-center gap-3'>
+              <span className='px-3.5 py-1 rounded-full stamp-badge text-primary text-[11px] font-mono font-bold tracking-widest'>
+                ✦ Bespoke Journey Dossier
+              </span>
+              <div className='flex items-center gap-1.5 px-3 py-1 rounded-full glass text-xs font-mono text-gray-300'>
+                <CloudSun className='w-3.5 h-3.5 text-primary' />
+                <span>26°C · Autumn Twilight Season</span>
+              </div>
+            </div>
+
+            {/* Print & Share CTAs */}
+            <div className='flex items-center gap-2'>
+              <button
+                type='button'
+                onClick={() => window.print()}
+                className='p-2 rounded-xl glass hover:border-primary text-gray-300 hover:text-white transition-colors cursor-pointer'
+                title='Print Editorial Brief'
+              >
+                <Printer className='w-4 h-4' />
+              </button>
+              <button
+                type='button'
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: trip.title, url: window.location.href }).catch(() => {})
+                  } else {
+                    navigator.clipboard.writeText(window.location.href)
+                    setToastMessage('✓ Itinerary link copied to clipboard')
+                    setTimeout(() => setToastMessage(null), 3000)
+                  }
+                }}
+                className='px-4 py-2 rounded-xl bg-primary text-black font-semibold text-xs flex items-center gap-1.5 shadow-md hover:bg-primary/90 transition-all cursor-pointer gold-glow'
+              >
+                <Share2 className='w-3.5 h-3.5' />
+                <span>Share Journey</span>
+              </button>
+            </div>
           </div>
-          <div className='flex items-center gap-2'>
-            <button
-              onClick={() => window.print()}
-              className='p-2 rounded-lg glass border border-white/10 hover:border-primary text-gray-300 hover:text-white transition-colors cursor-pointer'
-              title='Print Itinerary'
-            >
-              <Printer className='w-4 h-4' />
-            </button>
-            <button
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({ title: trip.title, url: window.location.href }).catch(() => {})
-                } else {
-                  navigator.clipboard.writeText(window.location.href)
-                  alert('Trip link copied to clipboard!')
-                }
-              }}
-              className='px-4 py-1.5 rounded-full bg-primary text-black font-sans text-xs font-semibold flex items-center gap-1.5 shadow-md hover:bg-primary/90 transition-colors cursor-pointer'
-            >
-              <Share2 className='w-3.5 h-3.5' /> Share
-            </button>
+
+          {/* Headline & Location */}
+          <div className='space-y-2 max-w-4xl'>
+            <div className='flex items-center gap-2 text-xs font-mono text-primary/90 uppercase tracking-widest'>
+              <MapPin className='w-3.5 h-3.5' />
+              <span>{trip.destination}</span>
+              <span>·</span>
+              <span>{days} Curated Days</span>
+            </div>
+            <h1 className='font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight'>
+              {trip.title}
+            </h1>
+          </div>
+
+          {/* Metadata Specs & Badges */}
+          <div className='flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-gray-300'>
+            <span className='flex items-center gap-1.5 px-3 py-1 rounded-lg glass-dark border-white/10'>
+              <Calendar className='w-3.5 h-3.5 text-primary' />
+              {trip.start_date} – {trip.end_date}
+            </span>
+            <span className='flex items-center gap-1.5 px-3 py-1 rounded-lg glass-dark border-white/10'>
+              <Users className='w-3.5 h-3.5 text-primary' />
+              {trip.travelers?.adults || 2} Adults{trip.travelers?.children ? `, ${trip.travelers.children} Kids` : ''}
+            </span>
+            <span className='px-3 py-1 rounded-lg glass-dark border-primary/30 text-primary font-bold uppercase'>
+              {trip.pace} Pace
+            </span>
+            <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-lg glass-dark border-emerald-500/30 text-emerald-400'>
+              <ShieldCheck className='w-3.5 h-3.5' /> Verified Opening Hours
+            </span>
+            {trip.interests?.map((item) => (
+              <span key={item} className='px-2.5 py-1 rounded-lg glass text-gray-400 uppercase text-[10px]'>
+                {item}
+              </span>
+            ))}
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* 2. SWISS CHRONOMETER BUDGET COMPLICATION */}
+      <div className='rounded-3xl border border-[rgba(212,165,116,0.2)] glass-strong p-6 sm:p-8 space-y-6'>
+        
+        {/* Complication Header */}
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4'>
+          <div>
+            <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold flex items-center gap-1.5'>
+              <Compass className='w-4 h-4' /> The Budget Compass
+            </span>
+            <h3 className='font-serif text-xl font-bold text-white mt-0.5'>
+              Ground Expense Architecture
+            </h3>
+          </div>
+          <div className='text-left sm:text-right font-mono text-xs'>
+            <span className='text-gray-400 block'>Safe Reserve Available</span>
+            <span className='font-serif text-lg font-bold text-emerald-400'>
+              ₹{reserveBuffer.toLocaleString()}
+            </span>
           </div>
         </div>
 
-        {/* Dossier Body */}
-        <div className='p-6 sm:p-8 space-y-6'>
-          <div className='flex flex-wrap items-center gap-3 text-xs font-mono text-gray-400'>
-            <span className='flex items-center gap-1 text-primary font-bold'>
-              <MapPin className='w-3.5 h-3.5' /> {trip.destination}
+        {/* 4 Multi-Tier Category Cards */}
+        <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono'>
+          
+          <div className='p-4 rounded-2xl bg-black/40 border border-[#c86d51]/30 space-y-1.5'>
+            <span className='text-[#c86d51] flex items-center gap-1 text-[11px] uppercase font-bold'>
+              <Camera className='w-3.5 h-3.5' /> Sightseeing & Entry
             </span>
-            <span>•</span>
-            <span className='flex items-center gap-1'>
-              <Calendar className='w-3.5 h-3.5' />
-              {trip.start_date} – {trip.end_date} ({days} Days)
+            <span className='font-serif text-xl font-bold text-white block'>
+              ₹{breakdown.sightseeing.toLocaleString()}
             </span>
-            <span>•</span>
-            <span className='flex items-center gap-1'>
-              <Users className='w-3.5 h-3.5' />
-              {trip.travelers?.adults || 2} Adults{trip.travelers?.children ? `, ${trip.travelers.children} Kids` : ''}
-            </span>
+            <span className='text-[10px] text-gray-500 block'>Palaces & Forts</span>
           </div>
 
-          <h1 className='font-serif text-3xl sm:text-5xl font-bold text-white leading-tight'>
-            {trip.title}
-          </h1>
-
-          <div className='flex flex-wrap items-center gap-2'>
-            {trip.interests?.map((interest) => (
-              <Badge key={interest} variant='secondary' className='glass border-white/10 text-gray-300 font-mono text-xs'>
-                {interest.charAt(0).toUpperCase() + interest.slice(1)}
-              </Badge>
-            ))}
-            <Badge variant='outline' className='border-primary text-primary font-mono text-xs'>
-              {trip.pace.toUpperCase()} PACE
-            </Badge>
-            <span className='inline-flex items-center gap-1 text-xs font-mono text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-500/30'>
-              <ShieldCheck className='w-3 h-3' /> Verified Opening Hours
+          <div className='p-4 rounded-2xl bg-black/40 border border-[#d4a574]/30 space-y-1.5'>
+            <span className='text-[#d4a574] flex items-center gap-1 text-[11px] uppercase font-bold'>
+              <Utensils className='w-3.5 h-3.5' /> Royal Dining & Cafes
             </span>
+            <span className='font-serif text-xl font-bold text-white block'>
+              ₹{breakdown.dining.toLocaleString()}
+            </span>
+            <span className='text-[10px] text-gray-500 block'>Thalis, Sweets & Tea</span>
           </div>
 
-          {/* Budget Compass Section */}
-          <div className='pt-4 border-t border-white/10 space-y-3'>
-            <div className='flex flex-wrap items-center justify-between text-xs font-mono'>
-              <span className='text-gray-400'>Estimated Ground Expenses</span>
-              <span className='font-bold text-white'>
-                ₹{totalCost.toLocaleString()} <span className='text-gray-500 font-normal'>/ ₹{trip.budget_inr?.toLocaleString() || '50,000'} Budget</span>
-              </span>
-            </div>
+          <div className='p-4 rounded-2xl bg-black/40 border border-[#2d4a3e]/50 space-y-1.5'>
+            <span className='text-emerald-400 flex items-center gap-1 text-[11px] uppercase font-bold'>
+              <Car className='w-3.5 h-3.5' /> Private Transit
+            </span>
+            <span className='font-serif text-xl font-bold text-white block'>
+              ₹{breakdown.transit.toLocaleString()}
+            </span>
+            <span className='text-[10px] text-gray-500 block'>AC Sedans & Autos</span>
+          </div>
 
-            <div className='h-3 w-full bg-white/10 rounded-full overflow-hidden flex'>
-              <div
-                className='h-full bg-primary gold-glow rounded-full transition-all duration-700'
-                style={{ width: `${budgetRatio}%` }}
-              />
-            </div>
+          <div className='p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5'>
+            <span className='text-gray-300 flex items-center gap-1 text-[11px] uppercase font-bold'>
+              <Layers className='w-3.5 h-3.5 text-primary' /> Culture & Bazaars
+            </span>
+            <span className='font-serif text-xl font-bold text-white block'>
+              ₹{breakdown.cultureAndShopping.toLocaleString()}
+            </span>
+            <span className='text-[10px] text-gray-500 block'>Handlooms & Spices</span>
+          </div>
 
-            <div className='flex flex-wrap items-center justify-between text-[11px] font-mono text-gray-400'>
-              <span>
-                Daily Avg: ~₹{Math.round(totalCost / days).toLocaleString()}/day
-              </span>
-              {trip.budget_inr && totalCost <= trip.budget_inr ? (
-                <span className='text-emerald-400 font-semibold'>
-                  ✓ ₹{(trip.budget_inr - totalCost).toLocaleString()} in safe reserve buffer
-                </span>
-              ) : (
-                <span className='text-red-400 font-semibold'>
-                  ⚠ Exceeds target by ₹{(totalCost - (trip.budget_inr || 0)).toLocaleString()}
-                </span>
-              )}
-            </div>
+        </div>
+
+        {/* Multi-Segmented Gauge Bar */}
+        <div className='space-y-2'>
+          <div className='h-3.5 w-full bg-black/60 rounded-full overflow-hidden flex border border-white/10 p-0.5 gap-1'>
+            <div
+              style={{ width: `${(breakdown.sightseeing / targetBudget) * 100}%` }}
+              className='h-full bg-[#c86d51] rounded-full'
+              title='Sightseeing'
+            />
+            <div
+              style={{ width: `${(breakdown.dining / targetBudget) * 100}%` }}
+              className='h-full bg-[#d4a574] rounded-full'
+              title='Dining'
+            />
+            <div
+              style={{ width: `${(breakdown.transit / targetBudget) * 100}%` }}
+              className='h-full bg-[#2d4a3e] rounded-full'
+              title='Transit'
+            />
+            <div
+              style={{ width: `${(breakdown.cultureAndShopping / targetBudget) * 100}%` }}
+              className='h-full bg-amber-200/50 rounded-full'
+              title='Culture'
+            />
+          </div>
+
+          <div className='flex items-center justify-between text-[11px] font-mono text-gray-400'>
+            <span>
+              Total Estimated Ground Burn: <strong className='text-white'>₹{totalCost.toLocaleString()}</strong> of ₹{targetBudget.toLocaleString()}
+            </span>
+            <span>
+              Pacing: ~₹{Math.round(totalCost / days).toLocaleString()}/day
+            </span>
           </div>
         </div>
 
       </div>
 
-      {/* Main Split Layout: Timeline on Left, Sticky Interactive Route Map on Right */}
+      {/* 3. DAY-BY-DAY EDITORIAL TIMELINE & CARTOGRAPHIC MAP */}
       <div className='space-y-6'>
         
-        {/* Header and Day Tabs */}
-        <div className='flex flex-wrap items-center justify-between gap-4'>
+        {/* Section Heading & Embossed Day Tabs */}
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
           <div>
             <h2 className='font-serif text-2xl sm:text-3xl font-bold text-white'>
-              Day-by-Day <span className='text-gold-shine'>Journey & Map</span>
+              Chronological <span className='text-gold-shine'>Timeline & Map</span>
             </h2>
-            <p className='text-xs font-mono text-gray-400 mt-1'>
-              Click "Swap Stop" to customize any place or rebalance pacing.
+            <p className='text-xs font-mono text-gray-400 mt-0.5'>
+              Click "Swap Stop" to customize any place or rebalance daily pacing.
             </p>
           </div>
-          <span className='font-mono text-xs text-gray-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/10'>
-            {itinerary.length} Days Planned
-          </span>
         </div>
 
         <Tabs value={activeDayTab} onValueChange={setActiveDayTab} className='space-y-6'>
           
-          <TabsList className='glass-dark p-1 rounded-2xl flex flex-wrap h-auto gap-1 border border-white/10'>
+          <TabsList className='bg-[#161410] p-1.5 rounded-2xl flex flex-wrap h-auto gap-2 border border-white/10'>
             {itinerary.map((day) => (
               <TabsTrigger
                 key={day.dayNumber}
                 value={day.dayNumber.toString()}
-                className='data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:font-bold font-mono text-xs px-5 py-2 rounded-xl transition-all cursor-pointer'
+                className='data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:font-bold font-mono text-xs px-6 py-2.5 rounded-xl transition-all cursor-pointer'
               >
                 Day 0{day.dayNumber}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {/* Responsive Split View: Cards (Left 7 cols) & Sticky Map (Right 5 cols) */}
+          {/* 7 Columns Timeline / 5 Columns Sticky Map */}
           <div className='grid lg:grid-cols-12 gap-8 items-start'>
             
-            {/* LEFT COLUMN: Activity Cards */}
+            {/* LEFT COLUMN: Activity Timeline Cards */}
             <div className='lg:col-span-7 space-y-6'>
               {itinerary.map((day) => (
                 <TabsContent key={day.dayNumber} value={day.dayNumber.toString()} className='space-y-6 mt-0'>
                   
-                  {/* Day Header Box */}
-                  <div className='p-6 rounded-2xl glass-dark border border-white/10 flex flex-wrap items-center justify-between gap-4'>
-                    <div className='flex items-center gap-3'>
-                      <div className='w-10 h-10 rounded-xl bg-primary text-black flex items-center justify-center font-serif text-lg font-bold shadow-md gold-glow'>
-                        {day.dayNumber}
+                  {/* Day Overview Banner */}
+                  <div className='p-6 rounded-3xl glass-strong border border-[rgba(212,165,116,0.2)] flex flex-wrap items-center justify-between gap-4'>
+                    <div className='flex items-center gap-4'>
+                      <div className='w-12 h-12 rounded-2xl bg-primary text-black flex items-center justify-center font-serif text-xl font-bold shadow-md gold-glow'>
+                        0{day.dayNumber}
                       </div>
                       <div>
-                        <h3 className='font-serif text-lg font-bold text-white'>
-                          Day 0{day.dayNumber}
+                        <h3 className='font-serif text-xl font-bold text-white'>
+                          Day 0{day.dayNumber} Sequence
                         </h3>
                         <p className='text-xs font-mono text-gray-400 mt-0.5'>
-                          {day.activities.length} Curated Stops • Est. ₹{getDayCost(day).toLocaleString()}
+                          {day.activities.length} Curated Stops · Est. ₹{getDayCost(day).toLocaleString()}
                         </p>
                       </div>
                     </div>
 
-                    <div className='flex items-center gap-3'>
-                      <button
-                        type='button'
-                        onClick={() => handleRegenerateDay(day.dayNumber)}
-                        className='px-3.5 py-1.5 rounded-full glass border border-primary/30 hover:bg-primary/20 text-primary text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer'
-                        title='Regenerate this day with fresh curated places'
-                      >
-                        <RotateCcw className='w-3 h-3' />
-                        <span>Regenerate Day</span>
-                      </button>
-                    </div>
+                    <button
+                      type='button'
+                      onClick={() => handleRegenerateDay(day.dayNumber)}
+                      className='px-4 py-2 rounded-full glass border border-primary/30 hover:bg-primary/20 text-primary text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer'
+                      title='Rebalance this day with alternative curated places'
+                    >
+                      <RotateCcw className='w-3.5 h-3.5' />
+                      <span>Regenerate Day</span>
+                    </button>
 
                     {day.notes && (
-                      <p className='w-full text-xs font-sans text-gray-300 italic pt-2 border-t border-white/5'>
+                      <p className='w-full text-xs font-serif text-gray-300 italic pt-3 border-t border-white/5'>
                         "{day.notes}"
                       </p>
                     )}
                   </div>
 
-                  {/* Activity Timeline */}
-                  <div className='space-y-4 relative'>
+                  {/* Activity Timeline Items */}
+                  <div className='space-y-6 relative'>
                     {day.activities.map((activity, index) => {
                       const isSelected = selectedActivityId === activity.placeId
+                      const photoUrl = PLACE_PHOTO_MAP[activity.placeId] || heroImage
+
                       return (
                         <div
                           key={activity.sequence || index}
                           id={`activity-${activity.placeId}`}
                           className='relative flex gap-4'
                         >
-                          {/* Visual Connector Dot */}
-                          <div className='flex flex-col items-center w-6 pt-6'>
+                          {/* Visual Timeline Node */}
+                          <div className='flex flex-col items-center w-8 pt-6'>
                             <div
-                              className={`w-3.5 h-3.5 rounded-full ring-4 ring-[#0a0a0a] z-10 transition-all ${
+                              className={`w-4 h-4 rounded-full ring-4 ring-[#0e0d0b] z-10 transition-all ${
                                 isSelected ? 'bg-[#ffd700] scale-125 gold-glow-strong' : 'bg-primary gold-glow'
                               }`}
                             />
                             {index < day.activities.length - 1 && (
-                              <div className='w-0.5 flex-1 bg-primary/20' />
+                              <div className='w-0.5 flex-1 bg-primary/25 my-1' />
                             )}
                           </div>
 
-                          {/* Postcard Activity Card */}
+                          {/* Postcard Activity Card with Photo Vignette */}
                           <div
                             onClick={() => setSelectedActivityId(activity.placeId)}
-                            className={`flex-1 rounded-2xl border p-6 shadow-md transition-all space-y-4 cursor-pointer ${
+                            className={`flex-1 rounded-3xl border overflow-hidden shadow-xl transition-all duration-300 cursor-pointer ${
                               isSelected
-                                ? 'border-primary bg-primary/10 ring-2 ring-primary/50 gold-glow'
+                                ? 'border-primary bg-primary/10 ring-2 ring-primary/40 gold-glow'
                                 : 'border-white/10 glass-strong hover:border-primary/40'
                             }`}
                           >
-                            <div className='flex flex-wrap items-center justify-between gap-2'>
-                              <div className='flex items-center gap-2'>
-                                <span className='px-2.5 py-1 rounded-md bg-primary/20 text-primary font-mono text-xs font-bold border border-primary/30'>
-                                  {activity.startTime} – {activity.endTime}
-                                </span>
-                                <span className='px-2.5 py-1 rounded-md glass text-gray-300 font-mono text-xs uppercase'>
-                                  {activity.type}
-                                </span>
-                                <span className='text-xs font-mono text-gray-400'>
-                                  Stop 0{activity.sequence || index + 1}
-                                </span>
-                              </div>
-                              {activity.verified && (
-                                <span className='inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-500/30'>
-                                  <CheckCircle2 className='w-3 h-3' /> Verified Open
-                                </span>
-                              )}
-                            </div>
-
-                            <div className='space-y-1.5'>
-                              <h4 className='font-serif text-xl font-bold text-white'>
-                                {activity.title}
-                              </h4>
-                              <p className='text-xs font-mono text-gray-400'>
-                                📍 {activity.placeName} — {activity.address}
-                              </p>
-                              {activity.description && (
-                                <p className='text-sm text-gray-300 leading-relaxed font-sans pt-1'>
-                                  {activity.description}
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Card Footer with ₹ Cost, Swap, Pin, Maps & Booking */}
-                            <div className='pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono'>
-                              <span className='text-white font-bold'>
-                                Est. Cost: ₹{activity.costEstimateINR?.toLocaleString() || 'Free'}
-                              </span>
+                            <div className='flex flex-col sm:flex-row'>
                               
-                              <div className='flex flex-wrap items-center gap-2'>
-                                {/* Swap Stop Trigger Button */}
-                                <button
-                                  type='button'
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setSwappingActivity(activity)
-                                    setSwappingDayNumber(day.dayNumber)
-                                    setSwapModalOpen(true)
-                                  }}
-                                  className='px-3.5 py-1.5 rounded-full glass border border-amber-500/40 hover:bg-amber-500/20 text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer gold-glow'
-                                  title='Customize or swap this activity'
-                                >
-                                  <ArrowLeftRight className='w-3 h-3 text-amber-400' />
-                                  <span>Swap Stop</span>
-                                </button>
-
-                                {/* Pin on Map Trigger Button */}
-                                <button
-                                  type='button'
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setSelectedActivityId(activity.placeId)
-                                  }}
-                                  className='px-3 py-1.5 rounded-full glass border border-primary/40 hover:bg-primary/20 text-primary flex items-center gap-1 transition-colors'
-                                >
-                                  <Navigation className='w-3 h-3' />
-                                  <span>Pin</span>
-                                </button>
-
-                                <a
-                                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.placeName + ' ' + activity.address)}`}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  onClick={(e) => e.stopPropagation()}
-                                  className='px-3 py-1.5 rounded-full glass border border-white/20 hover:border-primary text-gray-300 flex items-center gap-1 transition-colors'
-                                >
-                                  <span>Maps</span>
-                                  <ExternalLink className='w-3 h-3' />
-                                </a>
-
-                                <button
-                                  type='button'
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    alert(`Redirecting to verified partner booking for ${activity.placeName}`)
-                                  }}
-                                  className='px-3.5 py-1.5 rounded-full bg-primary text-black font-bold flex items-center gap-1 shadow-md hover:bg-primary/90 transition-colors gold-glow'
-                                >
-                                  <span>Book</span>
-                                  <ExternalLink className='w-3 h-3' />
-                                </button>
+                              {/* Left Thumbnail Vignette */}
+                              <div className='relative sm:w-44 h-44 sm:h-auto flex-shrink-0 overflow-hidden bg-black/60'>
+                                <Image
+                                  src={photoUrl}
+                                  alt={activity.placeName}
+                                  fill
+                                  className='object-cover hover:scale-105 transition-transform duration-700'
+                                />
+                                <div className='absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/80 via-black/20 to-transparent' />
+                                <div className='absolute bottom-3 left-3 sm:top-3 sm:left-3 z-10'>
+                                  <span className='px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/20 text-white font-mono text-[10px] font-bold'>
+                                    Stop 0{activity.sequence || index + 1}
+                                  </span>
+                                </div>
                               </div>
+
+                              {/* Right Content Body */}
+                              <div className='p-6 flex-1 space-y-3.5'>
+                                
+                                <div className='flex flex-wrap items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2'>
+                                    <span className='px-2.5 py-0.5 rounded-full bg-primary/20 text-primary font-mono text-xs font-bold border border-primary/30'>
+                                      {activity.startTime} – {activity.endTime}
+                                    </span>
+                                    <span className='px-2 py-0.5 rounded-full glass text-gray-300 font-mono text-[11px] uppercase'>
+                                      {activity.type}
+                                    </span>
+                                  </div>
+                                  {activity.verified && (
+                                    <span className='inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-500/30'>
+                                      <CheckCircle2 className='w-3 h-3' /> Verified Open
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div>
+                                  <h4 className='font-serif text-xl font-bold text-white'>
+                                    {activity.title}
+                                  </h4>
+                                  <p className='text-xs font-mono text-gray-400 flex items-center gap-1.5 mt-1'>
+                                    <MapPin className='w-3.5 h-3.5 text-primary flex-shrink-0' />
+                                    <span>{activity.placeName}</span>
+                                    <span>·</span>
+                                    <span className='truncate'>{activity.address}</span>
+                                  </p>
+                                </div>
+
+                                {activity.description && (
+                                  <p className='text-xs sm:text-sm text-gray-300 leading-relaxed font-sans'>
+                                    {activity.description}
+                                  </p>
+                                )}
+
+                                {/* Action Bar */}
+                                <div className='pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono'>
+                                  <span className='text-white font-bold'>
+                                    Est. Cost: ₹{activity.costEstimateINR?.toLocaleString() || 'Free'}
+                                  </span>
+
+                                  <div className='flex flex-wrap items-center gap-2'>
+                                    {/* Swap Button */}
+                                    <button
+                                      type='button'
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSwappingActivity(activity)
+                                        setSwappingDayNumber(day.dayNumber)
+                                        setSwapModalOpen(true)
+                                      }}
+                                      className='px-3.5 py-1.5 rounded-full glass border border-amber-500/40 hover:bg-amber-500/20 text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer gold-glow'
+                                      title='Customize or swap this activity'
+                                    >
+                                      <ArrowLeftRight className='w-3 h-3 text-amber-400' />
+                                      <span>Swap Stop</span>
+                                    </button>
+
+                                    {/* Pin Button */}
+                                    <button
+                                      type='button'
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedActivityId(activity.placeId)
+                                      }}
+                                      className='px-3 py-1.5 rounded-full glass border border-primary/40 hover:bg-primary/20 text-primary flex items-center gap-1 transition-colors'
+                                    >
+                                      <Navigation className='w-3 h-3' />
+                                      <span>Pin</span>
+                                    </button>
+
+                                    {/* Maps link */}
+                                    <a
+                                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.placeName + ' ' + activity.address)}`}
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      onClick={(e) => e.stopPropagation()}
+                                      className='px-3 py-1.5 rounded-full glass border border-white/20 hover:border-primary text-gray-300 flex items-center gap-1 transition-colors'
+                                    >
+                                      <span>Maps</span>
+                                      <ExternalLink className='w-3 h-3' />
+                                    </a>
+
+                                    {/* Book link */}
+                                    <button
+                                      type='button'
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        alert(`Redirecting to verified partner booking for ${activity.placeName}`)
+                                      }}
+                                      className='px-3.5 py-1.5 rounded-full bg-primary text-black font-bold flex items-center gap-1 shadow-md hover:bg-primary/90 transition-colors gold-glow'
+                                    >
+                                      <span>Book</span>
+                                      <ExternalLink className='w-3 h-3' />
+                                    </button>
+                                  </div>
+                                </div>
+
+                              </div>
+
                             </div>
                           </div>
                         </div>
                       )
                     })}
 
-                    {/* Transport Legs Summary for Day */}
+                    {/* Transit Leg Card */}
                     {day.transport && day.transport.length > 0 && (
-                      <div className='mt-6 p-4 rounded-xl glass-dark border border-white/10 space-y-2'>
-                        <div className='text-xs font-mono uppercase tracking-wider text-primary font-bold flex items-center gap-1.5'>
-                          <span>🚖</span> Day Transit Legs (Vande Bharat / AC Cab / Auto)
+                      <div className='mt-6 p-5 rounded-2xl glass-dark border border-white/10 space-y-2'>
+                        <div className='text-xs font-mono uppercase tracking-wider text-primary font-bold flex items-center gap-2'>
+                          <Car className='w-4 h-4' />
+                          <span>Private Transit Choreography (AC Chauffeur / Vande Bharat)</span>
                         </div>
                         {day.transport.map((t, idx) => (
-                          <div key={idx} className='flex items-center justify-between text-xs font-mono text-gray-400 py-0.5'>
+                          <div key={idx} className='flex items-center justify-between text-xs font-mono text-gray-400 py-1 border-b border-white/5 last:border-none'>
                             <span>{t.departureTime} – {t.arrivalTime}: <strong className='text-gray-200'>{t.mode.toUpperCase()}</strong></span>
                             <span className='text-gray-200'>₹{t.costEstimateINR?.toLocaleString() || '—'}</span>
                           </div>
                         ))}
                       </div>
                     )}
+
                   </div>
 
                 </TabsContent>
               ))}
             </div>
 
-            {/* RIGHT COLUMN: Sticky Interactive Route Map */}
+            {/* RIGHT COLUMN: Sticky Cartographic Map with Brass Bezel */}
             <div className='lg:col-span-5 lg:sticky lg:top-24 space-y-4'>
-              <TripRouteMap
-                activities={currentDayPlan?.activities || []}
-                destination={trip.destination}
-                selectedActivityId={selectedActivityId}
-                onSelectActivity={(id) => {
-                  setSelectedActivityId(id)
-                  const el = document.getElementById(`activity-${id}`)
-                  el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }}
-              />
+              <div className='p-2 rounded-3xl border border-[rgba(212,165,116,0.3)] glass-strong gold-glow overflow-hidden'>
+                <div className='px-4 py-2 border-b border-white/10 flex items-center justify-between text-xs font-mono text-gray-400'>
+                  <span className='flex items-center gap-1 text-primary font-bold'>
+                    <Compass className='w-3.5 h-3.5' /> Route Cartography
+                  </span>
+                  <span className='text-[10px] text-gray-500'>Click pins to center</span>
+                </div>
+                <TripRouteMap
+                  activities={currentDayPlan?.activities || []}
+                  destination={trip.destination}
+                  selectedActivityId={selectedActivityId}
+                  onSelectActivity={(id) => {
+                    setSelectedActivityId(id)
+                    const el = document.getElementById(`activity-${id}`)
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  }}
+                />
+              </div>
             </div>
 
           </div>

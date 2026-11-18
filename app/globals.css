@@ -8,60 +8,68 @@
   --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-mono: var(--font-space-mono), 'JetBrains Mono', 'Segoe UI Mono', monospace;
+  
+  /* Rich Editorial Metallics & Heritage Tones */
   --color-primary: #d4a574;
-  --color-primary-foreground: #0a0a0a;
-  --color-accent: #ffd700;
-  --color-accent-foreground: #0a0a0a;
-  --color-border: rgba(255, 255, 255, 0.12);
-  --color-card: #141414;
-  --color-card-foreground: #f5f5f5;
-  --color-muted: #1f1f1f;
-  --color-muted-foreground: #a0a0a0;
-  --radius-lg: 1rem;
-  --radius-md: 0.75rem;
+  --color-primary-foreground: #0e0d0b;
+  --color-accent: #f5e6d3;
+  --color-accent-foreground: #0e0d0b;
+  --color-brass: #c59b6d;
+  --color-terracotta: #c86d51;
+  --color-monsoon-jade: #2d4a3e;
+  --color-espresso: #0e0d0b;
+  --color-sandstone: #161410;
+  
+  --color-border: rgba(212, 165, 116, 0.15);
+  --color-card: #161410;
+  --color-card-foreground: #fbf5ee;
+  --color-muted: #1e1b15;
+  --color-muted-foreground: #a69e90;
+  --radius-lg: 1.25rem;
+  --radius-md: 0.875rem;
   --radius-sm: 0.5rem;
 }
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --card: #141414;
-  --card-foreground: #f5f5f5;
-  --popover: #141414;
-  --popover-foreground: #f5f5f5;
+  --background: #0e0d0b;
+  --foreground: #fbf5ee;
+  --card: #161410;
+  --card-foreground: #fbf5ee;
+  --popover: #161410;
+  --popover-foreground: #fbf5ee;
   --primary: #d4a574;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1f1f1f;
-  --secondary-foreground: #f5f5f5;
-  --muted: #1f1f1f;
-  --muted-foreground: #a0a0a0;
-  --accent: #ffd700;
-  --accent-foreground: #0a0a0a;
+  --primary-foreground: #0e0d0b;
+  --secondary: #221e17;
+  --secondary-foreground: #fbf5ee;
+  --muted: #1e1b15;
+  --muted-foreground: #a69e90;
+  --accent: #f5e6d3;
+  --accent-foreground: #0e0d0b;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.15);
+  --border: rgba(212, 165, 116, 0.15);
+  --input: rgba(255, 255, 255, 0.12);
   --ring: #d4a574;
-  --radius: 0.75rem;
+  --radius: 0.875rem;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --card: #141414;
-  --card-foreground: #f5f5f5;
-  --popover: #141414;
-  --popover-foreground: #f5f5f5;
+  --background: #0e0d0b;
+  --foreground: #fbf5ee;
+  --card: #161410;
+  --card-foreground: #fbf5ee;
+  --popover: #161410;
+  --popover-foreground: #fbf5ee;
   --primary: #d4a574;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1f1f1f;
-  --secondary-foreground: #f5f5f5;
-  --muted: #1f1f1f;
-  --muted-foreground: #a0a0a0;
-  --accent: #ffd700;
-  --accent-foreground: #0a0a0a;
+  --primary-foreground: #0e0d0b;
+  --secondary: #221e17;
+  --secondary-foreground: #fbf5ee;
+  --muted: #1e1b15;
+  --muted-foreground: #a69e90;
+  --accent: #f5e6d3;
+  --accent-foreground: #0e0d0b;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.15);
+  --border: rgba(212, 165, 116, 0.15);
+  --input: rgba(255, 255, 255, 0.12);
   --ring: #d4a574;
 }
 
@@ -71,63 +79,78 @@
     outline-color: var(--ring);
   }
   body {
-    background: radial-gradient(circle at 50% 0%, #1c1c1c 0%, #0a0a0a 100%);
+    background-color: #0e0d0b;
+    background-image: 
+      radial-gradient(ellipse 90% 45% at 50% -10%, rgba(212, 165, 116, 0.12), transparent 70%),
+      radial-gradient(circle 800px at 100% 40%, rgba(200, 109, 81, 0.035), transparent 70%),
+      radial-gradient(circle 600px at 0% 70%, rgba(45, 74, 62, 0.04), transparent 60%);
+    background-attachment: fixed;
     color: var(--foreground);
     font-family: var(--font-sans);
     min-height: 100vh;
   }
 }
 
-/* Glassmorphism & Luxury Glow Utilities */
+/* Tactile Materiality & Editorial Glass Utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(26, 23, 19, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 165, 116, 0.15);
 }
 
 .glass-strong {
-  background: rgba(20, 20, 20, 0.75);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(22, 20, 16, 0.85);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(212, 165, 116, 0.2);
 }
 
 .glass-dark {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 13, 11, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Foil-Pressed Metallic Border */
+.border-foil {
+  border-image: linear-gradient(135deg, rgba(212, 165, 116, 0.5) 0%, rgba(212, 165, 116, 0.08) 50%, rgba(212, 165, 116, 0.35) 100%) 1;
+}
+
+.border-foil-rounded {
+  border: 1px solid transparent;
+  background: 
+    linear-gradient(#161410, #161410) padding-box,
+    linear-gradient(135deg, rgba(212, 165, 116, 0.45) 0%, rgba(212, 165, 116, 0.08) 50%, rgba(212, 165, 116, 0.3) 100%) border-box;
+}
+
+/* Warm Ambient Glows */
 .gold-glow {
-  box-shadow: 0 0 25px rgba(212, 165, 116, 0.25);
+  box-shadow: 0 10px 35px -5px rgba(212, 165, 116, 0.18), 0 0 1px 1px rgba(212, 165, 116, 0.2);
 }
 
 .gold-glow-strong {
-  box-shadow: 0 0 35px rgba(212, 165, 116, 0.45), 0 0 70px rgba(212, 165, 116, 0.15);
-}
-
-.text-glow-gold {
-  text-shadow: 0 0 20px rgba(212, 165, 116, 0.6), 0 0 40px rgba(212, 165, 116, 0.3);
-}
-
-.text-glow-white {
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.2);
-}
-
-.text-gold {
-  background: linear-gradient(135deg, #d4a574 0%, #ffd700 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  box-shadow: 0 12px 45px -5px rgba(212, 165, 116, 0.35), 0 0 2px 1px rgba(212, 165, 116, 0.4);
 }
 
 .text-gold-shine {
-  background: linear-gradient(135deg, #d4a574 0%, #ffd700 50%, #ffeb3b 100%);
+  background: linear-gradient(135deg, #fbf5ee 0%, #e2be8e 50%, #c59b6d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.text-champagne {
+  color: #f5e6d3;
+}
+
+/* Postcard & Stamp Badges */
+.stamp-badge {
+  border: 1px dashed rgba(212, 165, 116, 0.4);
+  background: rgba(212, 165, 116, 0.06);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
 .font-serif {
@@ -142,25 +165,25 @@
   font-family: var(--font-sans);
 }
 
-/* Leaflet Dark Customizations */
+/* Leaflet Dark Customizations with Brass Bezel */
 .roamio-dark-popup .leaflet-popup-content-wrapper {
   background: transparent !important;
   box-shadow: none !important;
   padding: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 16px !important;
 }
 .roamio-dark-popup .leaflet-popup-tip {
-  background: #141414 !important;
+  background: #1c1914 !important;
   border: 1px solid rgba(212, 165, 116, 0.4) !important;
 }
 .leaflet-container {
-  background: #0a0a0a !important;
+  background: #0e0d0b !important;
 }
 
-/* Luxury Dark Mode Tile Filter for OpenStreetMap */
+/* OpenStreetMap luxury dark inversion */
 .map-tiles-dark img,
 .map-tiles-dark.leaflet-tile {
-  filter: invert(100%) hue-rotate(180deg) brightness(80%) contrast(105%) grayscale(30%) !important;
+  filter: invert(100%) hue-rotate(185deg) brightness(78%) contrast(110%) grayscale(40%) !important;
 }
 
 @media print {
@@ -171,7 +194,7 @@
   header, footer, nav, button:not(.print-preserve) {
     display: none !important;
   }
-  .glass, .glass-strong, .glass-dark {
+  .glass, .glass-strong, .glass-dark, .border-foil-rounded {
     background: #ffffff !important;
     border: 1px solid #dddddd !important;
     color: #111111 !important;
@@ -186,4 +209,3 @@
     box-shadow: none !important;
   }
 }
-

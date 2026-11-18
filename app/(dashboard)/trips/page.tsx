@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import {
   Plus,
@@ -36,6 +37,15 @@ interface SavedTrip {
   itinerary?: any[]
 }
 
+const DESTINATION_HERO_MAP: Record<string, string> = {
+  jaipur: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80',
+  kerala: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
+  goa: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
+  manali: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80',
+  udaipur: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=800&q=80',
+  rishikesh: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80',
+}
+
 const DEFAULT_DEMO_TRIP: SavedTrip = {
   id: 'sample',
   title: 'Royal Heritage & Bazaars of Jaipur',
@@ -53,7 +63,6 @@ export default function MyTripsPage() {
   const [trips, setTrips] = useState<SavedTrip[]>([])
   const [loading, setLoading] = useState(true)
   const [copiedId, setCopiedId] = useState<string | null>(null)
-  const [isCloudSync, setIsCloudSync] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -68,7 +77,6 @@ export default function MyTripsPage() {
     try {
       const { data: authData } = await supabase.auth.getUser()
       if (authData?.user) {
-        setIsCloudSync(true)
         const { data, error } = await supabase
           .from('trips')
           .select('*, itineraries(*)')
@@ -88,7 +96,6 @@ export default function MyTripsPage() {
         const localData = localStorage.getItem('roamio_guest_trips')
         if (localData) {
           const parsed: SavedTrip[] = JSON.parse(localData)
-          // Merge without duplicates
           const existingIds = new Set(fetchedTrips.map((t) => t.id))
           for (const item of parsed) {
             if (!existingIds.has(item.id)) {
@@ -101,7 +108,6 @@ export default function MyTripsPage() {
       }
     }
 
-    // If no trips found at all, show the sample trip so user sees a rich card
     if (fetchedTrips.length === 0) {
       fetchedTrips = [DEFAULT_DEMO_TRIP]
     }
@@ -113,12 +119,10 @@ export default function MyTripsPage() {
   async function deleteTrip(id: string) {
     if (!confirm('Are you sure you want to remove this trip?')) return
 
-    // Remove from Supabase if connected
     try {
       await supabase.from('trips').delete().eq('id', id)
     } catch {}
 
-    // Remove from localStorage
     if (typeof window !== 'undefined') {
       try {
         const localData = localStorage.getItem('roamio_guest_trips')
@@ -154,6 +158,17 @@ export default function MyTripsPage() {
     }
   }
 
+  function getDestinationImage(destination: string) {
+    const dest = destination.toLowerCase()
+    if (dest.includes('jaipur')) return DESTINATION_HERO_MAP.jaipur
+    if (dest.includes('kerala') || dest.includes('alleppey')) return DESTINATION_HERO_MAP.kerala
+    if (dest.includes('goa')) return DESTINATION_HERO_MAP.goa
+    if (dest.includes('manali')) return DESTINATION_HERO_MAP.manali
+    if (dest.includes('udaipur')) return DESTINATION_HERO_MAP.udaipur
+    if (dest.includes('rishikesh')) return DESTINATION_HERO_MAP.rishikesh
+    return DESTINATION_HERO_MAP.jaipur
+  }
+
   if (loading) {
     return (
       <div className='min-h-[500px] flex flex-col items-center justify-center gap-3 text-primary font-mono text-sm'>
@@ -164,87 +179,98 @@ export default function MyTripsPage() {
   }
 
   return (
-    <div className='max-w-7xl mx-auto space-y-8 pb-16'>
+    <div className='max-w-7xl mx-auto space-y-10 pb-20'>
       
-      {/* Header */}
+      {/* Editorial Header */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6'>
         <div>
           <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold block mb-1'>
-            My Journeys
+            The Traveler's Collection
           </span>
-          <h1 className='font-serif text-3xl sm:text-4xl font-bold text-white'>
-            Saved <span className='text-gold-shine'>Trips</span>
+          <h1 className='font-serif text-3xl sm:text-5xl font-bold text-white'>
+            Saved <span className='text-gold-shine'>Journeys</span>
           </h1>
-          <p className='text-xs sm:text-sm text-gray-400 mt-1'>
-            {trips.length} {trips.length === 1 ? 'trip' : 'trips'} planned and ready to explore.
+          <p className='text-xs sm:text-sm text-gray-400 mt-1 font-sans'>
+            {trips.length} curated domestic itinerary {trips.length === 1 ? 'ready for departure' : 'ready for departure'}.
           </p>
         </div>
 
         <Link href='/new'>
-          <Button className='bg-primary text-black font-semibold text-sm px-6 py-2.5 rounded-full shadow-md gold-glow hover:bg-primary/90 gap-2 cursor-pointer'>
+          <Button className='bg-primary text-black font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-md gold-glow hover:bg-primary/90 gap-2 cursor-pointer'>
             <Plus className='w-4 h-4' />
-            <span>Plan New Journey</span>
+            <span>Design New Journey</span>
           </Button>
         </Link>
       </div>
 
-      {/* Trips Grid */}
+      {/* Postcard Boarding Pass Grid */}
       {trips.length === 0 ? (
         <div className='rounded-3xl border border-white/10 glass-dark p-12 text-center space-y-4 max-w-lg mx-auto'>
           <Compass className='w-12 h-12 mx-auto text-primary/60' />
-          <h3 className='font-serif text-xl font-bold text-white'>No Saved Journeys Yet</h3>
+          <h3 className='font-serif text-xl font-bold text-white'>Your Dossier Is Empty</h3>
           <p className='text-xs text-gray-400 leading-relaxed'>
-            Design a custom, budget-aware domestic Indian travel itinerary grounded in Google Places and curated pacing.
+            Begin your next journey with curated pacing, verified Google Places opening hours, and balanced budgets in ₹ INR.
           </p>
           <div className='pt-2'>
             <Link href='/new'>
               <Button className='bg-primary text-black font-semibold text-xs px-6 py-2 rounded-full gold-glow'>
-                Start Your First Trip
+                Start Planning
               </Button>
             </Link>
           </div>
         </div>
       ) : (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
           {trips.map((trip) => {
             const days = calculateDuration(trip.start_date, trip.end_date)
+            const photoUrl = getDestinationImage(trip.destination)
+
             return (
               <div
                 key={trip.id}
-                className='group rounded-3xl border border-white/10 glass-strong overflow-hidden hover:border-primary/40 transition-all duration-300 hover:shadow-2xl flex flex-col justify-between'
+                className='group rounded-3xl border border-[rgba(212,165,116,0.2)] glass-strong overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-2xl flex flex-col sm:flex-row'
               >
-                {/* Card Top */}
-                <div className='p-6 space-y-4'>
+                {/* Left Thumbnail Vignette */}
+                <div className='relative sm:w-56 h-48 sm:h-auto overflow-hidden bg-black/60 flex-shrink-0'>
+                  <Image
+                    src={photoUrl}
+                    alt={trip.destination}
+                    fill
+                    className='object-cover group-hover:scale-105 transition-transform duration-700'
+                  />
+                  <div className='absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#161410] via-black/30 to-transparent' />
                   
-                  {/* Badge & Dates */}
-                  <div className='flex items-center justify-between text-xs font-mono'>
-                    <span className='px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-bold'>
-                      {days} Days Journey
-                    </span>
-                    <span className='text-gray-400 flex items-center gap-1'>
-                      <Calendar className='w-3.5 h-3.5 text-primary/70' />
-                      {format(new Date(trip.start_date), 'MMM d')} – {format(new Date(trip.end_date), 'MMM d, yyyy')}
+                  <div className='absolute top-3 left-3 z-10'>
+                    <span className='px-3 py-1 rounded-full stamp-badge text-[10px] font-mono font-bold text-primary'>
+                      {days} Days Dossier
                     </span>
                   </div>
+                </div>
 
-                  {/* Title & Destination */}
-                  <div>
-                    <h3 className='font-serif text-xl font-bold text-white group-hover:text-gold-shine transition-colors'>
+                {/* Right Postcard Information */}
+                <div className='p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4'>
+                  
+                  <div className='space-y-2'>
+                    <div className='flex items-center justify-between text-xs font-mono text-gray-400'>
+                      <span className='text-primary/90 flex items-center gap-1 font-bold'>
+                        <MapPin className='w-3.5 h-3.5' /> {trip.destination}
+                      </span>
+                      <span className='text-[11px]'>
+                        {format(new Date(trip.start_date), 'MMM d')} – {format(new Date(trip.end_date), 'MMM d, yyyy')}
+                      </span>
+                    </div>
+
+                    <h3 className='font-serif text-2xl font-bold text-white group-hover:text-gold-shine transition-colors leading-snug'>
                       {trip.title}
                     </h3>
-                    <p className='text-xs text-gray-400 flex items-center gap-1.5 mt-1'>
-                      <MapPin className='w-3.5 h-3.5 text-primary' />
-                      {trip.destination}
-                    </p>
                   </div>
 
-                  {/* Budget & Travelers specs */}
+                  {/* Specs: Target Budget & Party */}
                   <div className='grid grid-cols-2 gap-3 pt-3 border-t border-white/10 font-mono text-xs'>
                     <div>
                       <span className='text-[10px] text-gray-500 block uppercase'>Target Budget</span>
-                      <span className='font-bold text-emerald-400 flex items-center gap-0.5 mt-0.5'>
-                        <IndianRupee className='w-3.5 h-3.5' />
-                        {trip.budget_inr ? trip.budget_inr.toLocaleString() : '50,000'}
+                      <span className='font-serif text-base font-bold text-emerald-400 block mt-0.5'>
+                        ₹{trip.budget_inr ? trip.budget_inr.toLocaleString() : '50,000'}
                       </span>
                     </div>
                     <div>
@@ -257,58 +283,53 @@ export default function MyTripsPage() {
                     </div>
                   </div>
 
-                  {/* Interest Chips */}
+                  {/* Interest Badges */}
                   {trip.interests && trip.interests.length > 0 && (
                     <div className='flex flex-wrap gap-1.5 pt-1'>
                       {trip.interests.slice(0, 3).map((item) => (
                         <span
                           key={item}
-                          className='px-2 py-0.5 rounded-md text-[10px] font-mono uppercase bg-white/5 border border-white/10 text-gray-300'
+                          className='px-2.5 py-0.5 rounded-md text-[10px] font-mono uppercase bg-white/5 border border-white/10 text-gray-300'
                         >
                           {item}
                         </span>
                       ))}
-                      {trip.interests.length > 3 && (
-                        <span className='text-[10px] font-mono text-gray-500 self-center'>
-                          +{trip.interests.length - 3} more
-                        </span>
-                      )}
                     </div>
                   )}
 
-                </div>
+                  {/* Action Buttons */}
+                  <div className='pt-3 border-t border-white/10 flex items-center justify-between gap-2'>
+                    <Link
+                      href={`/trips/${trip.id}`}
+                      className='flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-black font-semibold text-xs gold-glow hover:bg-primary/90 transition-all'
+                    >
+                      <span>Open Dossier</span>
+                      <ExternalLink className='w-3.5 h-3.5' />
+                    </Link>
 
-                {/* Card Actions Footer */}
-                <div className='px-6 py-4 border-t border-white/10 bg-black/40 flex items-center justify-between gap-2'>
-                  <Link
-                    href={`/trips/${trip.id}`}
-                    className='flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-black font-semibold text-xs gold-glow hover:bg-primary/90 transition-all'
-                  >
-                    <span>View Itinerary</span>
-                    <ExternalLink className='w-3.5 h-3.5' />
-                  </Link>
+                    <button
+                      type='button'
+                      onClick={() => handleShare(trip.id)}
+                      className='p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all cursor-pointer'
+                      title='Share Journey Link'
+                    >
+                      {copiedId === trip.id ? (
+                        <Check className='w-4 h-4 text-emerald-400' />
+                      ) : (
+                        <Share2 className='w-4 h-4' />
+                      )}
+                    </button>
 
-                  <button
-                    type='button'
-                    onClick={() => handleShare(trip.id)}
-                    className='p-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all cursor-pointer'
-                    title='Share Itinerary Link'
-                  >
-                    {copiedId === trip.id ? (
-                      <Check className='w-4 h-4 text-emerald-400' />
-                    ) : (
-                      <Share2 className='w-4 h-4' />
-                    )}
-                  </button>
+                    <button
+                      type='button'
+                      onClick={() => deleteTrip(trip.id)}
+                      className='p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-all cursor-pointer'
+                      title='Delete Trip'
+                    >
+                      <Trash2 className='w-4 h-4' />
+                    </button>
+                  </div>
 
-                  <button
-                    type='button'
-                    onClick={() => deleteTrip(trip.id)}
-                    className='p-2 rounded-xl border border-white/15 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-all cursor-pointer'
-                    title='Delete Journey'
-                  >
-                    <Trash2 className='w-4 h-4' />
-                  </button>
                 </div>
 
               </div>

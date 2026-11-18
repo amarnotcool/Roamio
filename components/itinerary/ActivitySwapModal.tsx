@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Activity } from '@/lib/types'
 import {
   X,
@@ -16,6 +17,21 @@ import {
   Camera,
   UtensilsCrossed,
 } from 'lucide-react'
+
+const PLACE_PHOTO_MAP: Record<string, string> = {
+  jp1: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=400&q=80',
+  jp2: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=400&q=80',
+  jp3: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=400&q=80',
+  jp4: 'https://images.unsplash.com/photo-1609137144822-26d400490b6a?auto=format&fit=crop&w=400&q=80',
+  jp5: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=400&q=80',
+  jp6: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80',
+  jp7: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=400&q=80',
+  jp8: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=400&q=80',
+  jp9: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=400&q=80',
+  jp10: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80',
+  jp11: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80',
+  jp12: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=400&q=80',
+}
 
 interface ActivitySwapModalProps {
   isOpen: boolean
@@ -255,29 +271,41 @@ export default function ActivitySwapModal({
                         key={alt.placeId}
                         className='p-4 rounded-2xl glass-dark border border-white/10 hover:border-primary/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group'
                       >
-                        <div className='space-y-1 max-w-md'>
-                          <div className='flex items-center gap-2'>
-                            <span className='px-2 py-0.5 rounded text-[10px] font-mono glass text-gray-300 uppercase'>
-                              {alt.type}
-                            </span>
-                            <span className='text-[10px] font-mono text-emerald-400 flex items-center gap-1 bg-emerald-950/30 px-2 py-0.5 rounded-full border border-emerald-500/20'>
-                              <ShieldCheck className='w-2.5 h-2.5' /> Verified
-                            </span>
-                          </div>
-
-                          <h4 className='font-serif font-bold text-base text-white group-hover:text-primary transition-colors'>
-                            {alt.placeName}
-                          </h4>
-
-                          <p className='text-xs text-gray-400 line-clamp-1'>
-                            📍 {alt.address}
-                          </p>
-
-                          {alt.description && (
-                            <p className='text-xs text-gray-300 font-sans line-clamp-2 pt-0.5'>
-                              {alt.description}
-                            </p>
+                        <div className='flex items-start gap-3.5 max-w-md'>
+                          {PLACE_PHOTO_MAP[alt.placeId] && (
+                            <div className='relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-white/10'>
+                              <Image
+                                src={PLACE_PHOTO_MAP[alt.placeId]}
+                                alt={alt.placeName}
+                                fill
+                                className='object-cover group-hover:scale-105 transition-transform'
+                              />
+                            </div>
                           )}
+                          <div className='space-y-1'>
+                            <div className='flex items-center gap-2'>
+                              <span className='px-2 py-0.5 rounded text-[10px] font-mono glass text-gray-300 uppercase'>
+                                {alt.type}
+                              </span>
+                              <span className='text-[10px] font-mono text-emerald-400 flex items-center gap-1 bg-emerald-950/30 px-2 py-0.5 rounded-full border border-emerald-500/20'>
+                                <ShieldCheck className='w-2.5 h-2.5' /> Verified
+                              </span>
+                            </div>
+
+                            <h4 className='font-serif font-bold text-base text-white group-hover:text-primary transition-colors'>
+                              {alt.placeName}
+                            </h4>
+
+                            <p className='text-xs text-gray-400 line-clamp-1'>
+                              📍 {alt.address}
+                            </p>
+
+                            {alt.description && (
+                              <p className='text-xs text-gray-300 font-sans line-clamp-2 pt-0.5'>
+                                {alt.description}
+                              </p>
+                            )}
+                          </div>
                         </div>
 
                         {/* Cost & Swap Action */}
