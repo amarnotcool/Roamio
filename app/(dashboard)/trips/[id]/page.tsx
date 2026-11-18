@@ -431,7 +431,7 @@ export default function TripDetailPage() {
         <div className='bg-primary/15 px-6 sm:px-8 py-4 border-b border-primary/20 flex flex-wrap items-center justify-between gap-3'>
           <div className='flex items-center gap-2 font-mono text-xs text-primary font-bold'>
             <Sparkles className='w-3.5 h-3.5' />
-            <span>CONFIRMED ITINERARY · GROUNDED IN GOOGLE PLACES</span>
+            <span>CONFIRMED ITINERARY · VERIFIED PLACES</span>
           </div>
           <div className='flex items-center gap-2'>
             <button

@@ -111,7 +111,7 @@ export default function MyTripsPage() {
   }
 
   async function deleteTrip(id: string) {
-    if (!confirm('Are you sure you want to remove this journey from your dossier?')) return
+    if (!confirm('Are you sure you want to remove this trip?')) return
 
     // Remove from Supabase if connected
     try {
@@ -158,7 +158,7 @@ export default function MyTripsPage() {
     return (
       <div className='min-h-[500px] flex flex-col items-center justify-center gap-3 text-primary font-mono text-sm'>
         <div className='w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin' />
-        <span>Retrieving Journey Dossiers...</span>
+        <span>Loading Your Trips...</span>
       </div>
     )
   }
@@ -169,19 +169,14 @@ export default function MyTripsPage() {
       {/* Header */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6'>
         <div>
-          <div className='flex items-center gap-2 mb-1'>
-            <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold'>
-              Traveler Dossier
-            </span>
-            <span className='text-xs font-mono px-2.5 py-0.5 rounded-full border border-white/10 bg-white/5 text-gray-300'>
-              {isCloudSync ? '✦ Cloud Synced' : '✦ Guest / Local Cache'}
-            </span>
-          </div>
+          <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold block mb-1'>
+            My Journeys
+          </span>
           <h1 className='font-serif text-3xl sm:text-4xl font-bold text-white'>
-            Saved <span className='text-gold-shine'>Journeys</span>
+            Saved <span className='text-gold-shine'>Trips</span>
           </h1>
           <p className='text-xs sm:text-sm text-gray-400 mt-1'>
-            {trips.length} curated domestic itinerary {trips.length === 1 ? 'ready' : 'ready for departure'}.
+            {trips.length} {trips.length === 1 ? 'trip' : 'trips'} planned and ready to explore.
           </p>
         </div>
 

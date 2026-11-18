@@ -554,7 +554,7 @@ export default function HomePage() {
             <span>Wander Smarter, Not Harder · Indian Domestic Travel</span>
           </div>
           <div>
-            <span>Grounded in Google Places & Gemini 1.5 Flash</span>
+            <span>Curated Luxury Domestic Travel in India</span>
           </div>
         </div>
       </footer>

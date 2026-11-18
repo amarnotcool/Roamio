@@ -11,13 +11,9 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
   CheckCircle2,
-  Compass,
-  KeyRound,
-  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -31,7 +27,6 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info'; text: string } | null>(null)
-  const [isConfigured, setIsConfigured] = useState<boolean | null>(null)
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -39,41 +34,17 @@ function LoginContent() {
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
-    // Check if Supabase keys are configured
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    const configured = Boolean(
-      url &&
-      key &&
-      (url.startsWith('http://') || url.startsWith('https://')) &&
-      key.length > 20 &&
-      !key.includes('your_')
-    )
-    setIsConfigured(configured)
-
-    // Check if user is already signed in
-    if (configured) {
-      supabase.auth.getUser().then(({ data }: any) => {
-        if (data?.user) {
-          router.replace(nextUrl)
-        }
-      })
-    }
+    supabase.auth.getUser().then(({ data }: any) => {
+      if (data?.user) {
+        router.replace(nextUrl)
+      }
+    }).catch(() => {})
   }, [supabase, router, nextUrl])
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setStatusMessage(null)
-
-    if (!isConfigured) {
-      setStatusMessage({
-        type: 'info',
-        text: 'Supabase credentials are not connected yet. Please explore as a Guest or configure keys in .env.local.',
-      })
-      setLoading(false)
-      return
-    }
 
     if (password.length < 6) {
       setStatusMessage({
@@ -96,7 +67,7 @@ function LoginContent() {
           setStatusMessage({
             type: 'error',
             text: error.message.includes('Invalid login credentials')
-              ? 'Invalid email or password. Please verify your credentials or create a new account.'
+              ? 'Invalid email or password. Please check your credentials or create a new account.'
               : error.message,
           })
           setLoading(false)
@@ -106,12 +77,12 @@ function LoginContent() {
         if (data?.user) {
           setStatusMessage({
             type: 'success',
-            text: '✓ Access granted. Redirecting to your traveler dossier...',
+            text: '✓ Signed in successfully! Taking you to your trips...',
           })
           setTimeout(() => {
             router.push(nextUrl)
             router.refresh()
-          }, 800)
+          }, 600)
         }
       } else {
         // Sign up with Email + Password
@@ -130,20 +101,18 @@ function LoginContent() {
         }
 
         if (data?.session) {
-          // If auto-confirm is enabled on Supabase
           setStatusMessage({
             type: 'success',
-            text: '✓ Account created successfully! Initializing your dossier...',
+            text: '✓ Account created successfully! Taking you to your trips...',
           })
           setTimeout(() => {
             router.push(nextUrl)
             router.refresh()
-          }, 800)
+          }, 600)
         } else if (data?.user) {
-          // If email confirmation is required
           setStatusMessage({
             type: 'success',
-            text: '✦ Account created! A confirmation link has been sent to your email. You can also sign in directly once confirmed.',
+            text: '✦ Account created! Please check your email inbox to confirm your account.',
           })
           setLoading(false)
         }
@@ -158,14 +127,6 @@ function LoginContent() {
   }
 
   async function handleGoogleLogin() {
-    if (!isConfigured) {
-      setStatusMessage({
-        type: 'info',
-        text: 'Supabase credentials are not connected yet. Add NEXT_PUBLIC_SUPABASE_URL & ANON_KEY in .env.local to enable Google OAuth.',
-      })
-      return
-    }
-
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -177,44 +138,27 @@ function LoginContent() {
         setStatusMessage({ type: 'error', text: error.message })
       }
     } catch (err: any) {
-      setStatusMessage({ type: 'error', text: err?.message || 'OAuth initialization failed' })
+      setStatusMessage({ type: 'error', text: err?.message || 'Google sign-in is currently unavailable.' })
     }
   }
 
   return (
     <div className='min-h-screen bg-[#0a0a0a] text-white flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden'>
-      {/* Background radial gold glow */}
-      <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[380px] bg-primary/10 rounded-full blur-[130px] pointer-events-none' />
+      {/* Background soft ambient gold glow */}
+      <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[340px] bg-primary/10 rounded-full blur-[130px] pointer-events-none' />
 
       <div className='w-full max-w-md relative z-10 space-y-6'>
         
         {/* Logo / Header */}
-        <div className='text-center space-y-2'>
+        <div className='text-center space-y-1.5'>
           <Link href='/' className='inline-block group'>
             <span className='font-serif text-4xl font-bold tracking-wide text-gold-shine group-hover:opacity-90 transition-opacity'>
               Roamio
             </span>
           </Link>
           <p className='text-xs font-mono uppercase tracking-widest text-primary/80'>
-            Private Access & Cloud Sync
+            Luxury Domestic Travel
           </p>
-        </div>
-
-        {/* Supabase Connection Status Banner */}
-        <div className={`p-3.5 rounded-2xl border text-xs font-mono flex items-center justify-between gap-3 ${
-          isConfigured
-            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
-            : 'border-primary/30 bg-primary/10 text-[#d4a574]'
-        }`}>
-          <div className='flex items-center gap-2'>
-            <span className={`w-2 h-2 rounded-full ${isConfigured ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            <span>
-              {isConfigured ? 'Supabase Connected' : 'Supabase In Standby (Guest Mode Active)'}
-            </span>
-          </div>
-          <span className='text-[10px] uppercase tracking-wider text-gray-400'>
-            {isConfigured ? 'Cloud Sync ON' : 'Local Storage'}
-          </span>
         </div>
 
         {/* Main Card */}
@@ -254,12 +198,12 @@ function LoginContent() {
 
           <div className='space-y-1'>
             <h2 className='text-xl font-serif font-bold text-white'>
-              {authMode === 'signin' ? 'Access Your Traveler Dossier' : 'Join Roamio Private Club'}
+              {authMode === 'signin' ? 'Welcome Back' : 'Create Your Account'}
             </h2>
             <p className='text-xs text-gray-400'>
               {authMode === 'signin'
-                ? 'Sign in with your email and password to sync your itineraries.'
-                : 'Create your account to store trips, routes, and custom budgets.'}
+                ? 'Sign in to access your saved trips and personalized itineraries.'
+                : 'Sign up to plan, customize, and save your travel itineraries.'}
             </p>
           </div>
 
@@ -288,16 +232,15 @@ function LoginContent() {
             
             {/* Email Field */}
             <div className='space-y-2'>
-              <Label htmlFor='email' className='text-xs font-mono text-gray-300 flex items-center justify-between'>
-                <span>Email Address</span>
-                <span className='text-[10px] text-gray-500'>Stored in Supabase Auth</span>
+              <Label htmlFor='email' className='text-xs font-medium text-gray-300'>
+                Email Address
               </Label>
               <div className='relative'>
                 <Mail className='w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
                 <Input
                   id='email'
                   type='email'
-                  placeholder='traveler@roamio.in'
+                  placeholder='you@example.com'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -309,12 +252,14 @@ function LoginContent() {
 
             {/* Password Field */}
             <div className='space-y-2'>
-              <Label htmlFor='password' className='text-xs font-mono text-gray-300 flex items-center justify-between'>
-                <span>Password</span>
+              <div className='flex items-center justify-between'>
+                <Label htmlFor='password' className='text-xs font-medium text-gray-300'>
+                  Password
+                </Label>
                 {authMode === 'signup' && (
-                  <span className='text-[10px] text-primary/80'>Min 6 characters</span>
+                  <span className='text-[10px] font-mono text-gray-500'>Min 6 characters</span>
                 )}
-              </Label>
+              </div>
               <div className='relative'>
                 <Lock className='w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400' />
                 <Input
@@ -351,11 +296,11 @@ function LoginContent() {
               {loading ? (
                 <div className='flex items-center gap-2'>
                   <div className='w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin' />
-                  <span>{authMode === 'signin' ? 'Authenticating...' : 'Creating Account...'}</span>
+                  <span>Please wait...</span>
                 </div>
               ) : (
                 <>
-                  <span>{authMode === 'signin' ? 'Sign In to Dossier' : 'Create Free Account'}</span>
+                  <span>{authMode === 'signin' ? 'Sign In' : 'Create Account'}</span>
                   <ArrowRight className='w-4 h-4' />
                 </>
               )}
@@ -366,7 +311,7 @@ function LoginContent() {
           <div className='relative flex items-center justify-center'>
             <div className='border-t border-white/10 w-full' />
             <span className='bg-[#121212] px-3 font-mono text-[10px] uppercase text-gray-500 tracking-wider absolute'>
-              or continue with
+              or
             </span>
           </div>
 
@@ -401,9 +346,9 @@ function LoginContent() {
           <div className='pt-2 text-center'>
             <Link
               href={nextUrl}
-              className='text-xs font-mono text-primary/80 hover:text-primary transition-colors flex items-center justify-center gap-1.5'
+              className='text-xs text-gray-400 hover:text-primary transition-colors inline-flex items-center gap-1.5'
             >
-              <span>Continue as Guest without account</span>
+              <span>Continue as Guest</span>
               <ArrowRight className='w-3.5 h-3.5' />
             </Link>
           </div>
@@ -412,8 +357,9 @@ function LoginContent() {
 
         {/* Footer info */}
         <div className='text-center space-y-2'>
-          <p className='text-[11px] text-gray-500 font-sans'>
-            Protected by Supabase Auth with Row-Level Security (RLS).
+          <p className='text-[11px] text-gray-500 font-sans flex items-center justify-center gap-1.5'>
+            <ShieldCheck className='w-3.5 h-3.5 text-primary/70' />
+            Your travel preferences and account details are securely encrypted.
           </p>
           <div className='flex items-center justify-center gap-4 text-xs font-mono text-gray-400'>
             <Link href='/' className='hover:text-primary transition-colors'>
@@ -436,7 +382,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className='min-h-screen bg-[#0a0a0a] flex items-center justify-center text-primary font-mono text-sm'>
-          Loading authentication gateway...
+          Loading...
         </div>
       }
     >
