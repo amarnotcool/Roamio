@@ -38,7 +38,7 @@ function LoginContent() {
       if (data?.user) {
         router.replace(nextUrl)
       }
-    }).catch(() => {})
+    }).catch(() => { })
   }, [supabase, router, nextUrl])
 
   async function handleEmailAuth(e: React.FormEvent) {
@@ -148,7 +148,7 @@ function LoginContent() {
       <div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[340px] bg-primary/10 rounded-full blur-[130px] pointer-events-none' />
 
       <div className='w-full max-w-md relative z-10 space-y-6'>
-        
+
         {/* Logo / Header */}
         <div className='text-center space-y-1.5'>
           <Link href='/' className='inline-block group'>
@@ -163,7 +163,7 @@ function LoginContent() {
 
         {/* Main Card */}
         <div className='rounded-3xl border border-white/10 glass-strong p-8 shadow-2xl gold-glow space-y-6'>
-          
+
           {/* Sign In vs Sign Up Tabs */}
           <div className='flex items-center p-1 rounded-2xl bg-black/60 border border-white/10'>
             <button
@@ -172,11 +172,10 @@ function LoginContent() {
                 setAuthMode('signin')
                 setStatusMessage(null)
               }}
-              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${
-                authMode === 'signin'
-                  ? 'bg-primary text-black shadow-md'
-                  : 'text-gray-400 hover:text-white'
-              }`}
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${authMode === 'signin'
+                ? 'bg-primary text-black shadow-md'
+                : 'text-gray-400 hover:text-white'
+                }`}
             >
               Sign In
             </button>
@@ -186,11 +185,10 @@ function LoginContent() {
                 setAuthMode('signup')
                 setStatusMessage(null)
               }}
-              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${
-                authMode === 'signup'
-                  ? 'bg-primary text-black shadow-md'
-                  : 'text-gray-400 hover:text-white'
-              }`}
+              className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer font-bold ${authMode === 'signup'
+                ? 'bg-primary text-black shadow-md'
+                : 'text-gray-400 hover:text-white'
+                }`}
             >
               Create Account
             </button>
@@ -210,13 +208,12 @@ function LoginContent() {
           {/* Feedback messages */}
           {statusMessage && (
             <div
-              className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${
-                statusMessage.type === 'error'
-                  ? 'border-red-500/30 bg-red-500/10 text-red-300'
-                  : statusMessage.type === 'success'
+              className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${statusMessage.type === 'error'
+                ? 'border-red-500/30 bg-red-500/10 text-red-300'
+                : statusMessage.type === 'success'
                   ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
                   : 'border-primary/30 bg-primary/10 text-[#d4a574]'
-              }`}
+                }`}
             >
               {statusMessage.type === 'error' ? (
                 <AlertCircle className='w-4 h-4 flex-shrink-0 text-red-400 mt-0.5' />
@@ -229,7 +226,7 @@ function LoginContent() {
 
           {/* Email + Password Form */}
           <form onSubmit={handleEmailAuth} className='space-y-4'>
-            
+
             {/* Email Field */}
             <div className='space-y-2'>
               <Label htmlFor='email' className='text-xs font-medium text-gray-300'>

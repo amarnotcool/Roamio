@@ -70,6 +70,7 @@
     border-color: var(--border);
     outline-color: var(--ring);
   }
+
   body {
     background: radial-gradient(circle at 50% 0%, #1c1c1c 0%, #0a0a0a 100%);
     color: var(--foreground);
@@ -149,10 +150,12 @@
   padding: 0 !important;
   border-radius: 12px !important;
 }
+
 .roamio-dark-popup .leaflet-popup-tip {
   background: #141414 !important;
   border: 1px solid rgba(212, 165, 116, 0.4) !important;
 }
+
 .leaflet-container {
   background: #0a0a0a !important;
 }
@@ -168,22 +171,33 @@
     background: #ffffff !important;
     color: #111111 !important;
   }
-  header, footer, nav, button:not(.print-preserve) {
+
+  header,
+  footer,
+  nav,
+  button:not(.print-preserve) {
     display: none !important;
   }
-  .glass, .glass-strong, .glass-dark {
+
+  .glass,
+  .glass-strong,
+  .glass-dark {
     background: #ffffff !important;
     border: 1px solid #dddddd !important;
     color: #111111 !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
   }
-  .text-gold-shine, .text-gold, .text-primary {
+
+  .text-gold-shine,
+  .text-gold,
+  .text-primary {
     -webkit-text-fill-color: #8a6428 !important;
     color: #8a6428 !important;
   }
-  .gold-glow, .gold-glow-strong {
+
+  .gold-glow,
+  .gold-glow-strong {
     box-shadow: none !important;
   }
 }
-

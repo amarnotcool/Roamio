@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -9,13 +9,6 @@ import {
   Bot,
   Sparkles,
   CheckCircle2,
-  ShieldCheck,
-  Compass,
-  MapPin,
-  Calendar,
-  IndianRupee,
-  Clock,
-  ChevronDown,
 } from 'lucide-react'
 
 const featuredLocations = [
@@ -78,23 +71,12 @@ const demoScenarios = [
 export default function HomePage() {
   const router = useRouter()
   const [activeNav, setActiveNav] = useState('features')
-  const [searchQuery, setSearchQuery] = useState('')
   const [activeDemoIndex, setActiveDemoIndex] = useState(0)
-
-  function handleSearchSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const target = searchQuery.trim()
-    if (target) {
-      router.push(`/new?dest=${encodeURIComponent(target)}`)
-    } else {
-      router.push('/new')
-    }
-  }
 
   const activeDemo = demoScenarios[activeDemoIndex]
 
   return (
-    <div className='flex flex-col min-h-screen bg-[#0a0a0a] text-[#f5f5f5] overflow-x-hidden selection:bg-[#d4a574]/30 selection:text-white'>
+    <div className='flex flex-col min-h-screen bg-[#0D1119] text-[#f5f5f5] overflow-x-hidden selection:bg-[#D97742]/30 selection:text-white'>
       
       {/* ==================================================================== */}
       {/* 100% VW IMMERSIVE HERO SECTION (Warm Sunset Pagoda & Editorial Type) */}
@@ -116,7 +98,7 @@ export default function HomePage() {
           className='absolute inset-0 pointer-events-none'
           style={{
             background:
-              'linear-gradient(180deg, rgba(248, 230, 210, 0.94) 0%, rgba(244, 212, 184, 0.72) 28%, rgba(220, 148, 100, 0.28) 52%, rgba(10, 10, 10, 0.94) 92%, #0a0a0a 100%)',
+              'linear-gradient(180deg, rgba(248, 230, 210, 0.94) 0%, rgba(244, 212, 184, 0.72) 28%, rgba(220, 148, 100, 0.28) 52%, rgba(13, 17, 25, 0.94) 92%, #0D1119 100%)',
           }}
         />
 
@@ -256,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* FEATURED DESTINATIONS */}
-      <section id='destinations' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] via-[#10141d] to-[#0D1119]'>
+      <section id='destinations' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0D1119] via-[#10141d] to-[#0D1119]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 relative z-10'>
           
           {/* Section Header */}
@@ -376,7 +358,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Interactive Chat / Itinerary Simulation */}
-            <div className='relative'>
+            <div className='relative' id='scenarios'>
               <div className='relative bg-[#151B26]/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/[0.08]'>
                 
                 {/* Header */}
