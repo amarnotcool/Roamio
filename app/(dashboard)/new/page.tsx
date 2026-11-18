@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,95 +18,159 @@ import {
   ChevronRight,
   ShieldCheck,
   Check,
-  Bot,
+  Compass,
+  Clock,
+  Heart,
+  UserCheck,
+  Palmtree,
+  Camera,
+  Utensils,
+  Sun,
+  Flame,
+  CloudSun,
 } from 'lucide-react'
 import { TripFormData } from '@/lib/types'
 
 const CURATED_DESTINATIONS = [
   {
     name: 'Jaipur, Rajasthan',
-    tag: 'Pink City, Forts & Royal Bazaars',
-    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=600&q=80',
-    typicalBudget: 45000,
+    tag: 'Pink City, Mirrored Forts & Royal Bazaars',
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80',
+    typicalBudget: 50000,
+    season: 'Nov – Mar (Best Season)',
   },
   {
     name: 'Alleppey, Kerala',
-    tag: 'Monsoon Backwaters & Shikaras',
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=80',
-    typicalBudget: 50000,
-  },
-  {
-    name: 'Old Manali, Himachal',
-    tag: 'Cedar Forests & Mountain Solitude',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=600&q=80',
-    typicalBudget: 38000,
-  },
-  {
-    name: 'South Goa & Fontainhas',
-    tag: 'Latin Quarters, Cafes & Coast',
-    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=600&q=80',
+    tag: 'Monsoon Backwaters, Private Shikaras & Spices',
+    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
     typicalBudget: 55000,
+    season: 'Sep – Mar (Lush & Serene)',
   },
   {
     name: 'Udaipur, Rajasthan',
-    tag: 'Lake Palaces & Sunset Ghats',
-    image: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=600&q=80',
+    tag: 'Marble Palaces, Shimmering Lakes & Sunset Ghats',
+    image: 'https://images.unsplash.com/photo-1615836245337-f5b9b2303f10?auto=format&fit=crop&w=800&q=80',
     typicalBudget: 60000,
+    season: 'Oct – Mar (Royal Royalty)',
+  },
+  {
+    name: 'Old Manali, Himachal',
+    tag: 'Whispering Cedar Groves & Himalayan Solitude',
+    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80',
+    typicalBudget: 38000,
+    season: 'Apr – Jun & Dec (Snow / Crisp Air)',
+  },
+  {
+    name: 'South Goa & Fontainhas',
+    tag: 'Latin Quarters, Artisan Cafes & Secluded Coast',
+    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
+    typicalBudget: 55000,
+    season: 'Nov – Feb (Golden Sun)',
   },
   {
     name: 'Rishikesh, Uttarakhand',
-    tag: 'Ganga Aarti, Yoga & River Trails',
-    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=600&q=80',
-    typicalBudget: 32000,
+    tag: 'Ganga Aarti Twilight, Yoga Sanctuaries & Rapids',
+    image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80',
+    typicalBudget: 35000,
+    season: 'Oct – Apr (Serene Spirit)',
   },
 ]
 
 const PARTY_TYPES = [
-  { id: 'family', label: 'Family Vacation', desc: 'Child-friendly pacing & leisurely stops', defaultAdults: 2, defaultKids: 1 },
-  { id: 'couple', label: 'Couple Escapade', desc: 'Romantic sunsets, heritage stays & fine dining', defaultAdults: 2, defaultKids: 0 },
-  { id: 'friends', label: 'Friends Group', desc: 'Active explorations, cafes & shared transit', defaultAdults: 4, defaultKids: 0 },
-  { id: 'solo', label: 'Solo Wanderer', desc: 'Contemplative walks, flexibility & deep culture', defaultAdults: 1, defaultKids: 0 },
+  {
+    id: 'family',
+    label: 'Family Vacation',
+    icon: '👨‍👩‍👧',
+    desc: 'Child-friendly pacing, verified family dining & private AC transport.',
+    defaultAdults: 2,
+    defaultKids: 1,
+  },
+  {
+    id: 'couple',
+    label: 'Romantic Escape',
+    icon: '🥂',
+    desc: 'Secluded sunset viewpoints, heritage stays & candlelit courtyard dinners.',
+    defaultAdults: 2,
+    defaultKids: 0,
+  },
+  {
+    id: 'friends',
+    label: 'Curators & Friends',
+    icon: '🌿',
+    desc: 'Vibrant bazaars, artisan handlooms, street cafes & lively social pacing.',
+    defaultAdults: 4,
+    defaultKids: 0,
+  },
+  {
+    id: 'solo',
+    label: 'Solo Wanderer',
+    icon: '🧭',
+    desc: 'Contemplative architectural walks, secret stepwells & unhurried freedom.',
+    defaultAdults: 1,
+    defaultKids: 0,
+  },
 ]
 
 const PACES = [
   {
     value: 'relaxed',
     title: 'Unhurried & Slow',
-    sights: '2 key sights/day',
-    desc: 'Late morning starts, long relaxed meals, afternoon rest, zero rush.',
+    sights: '2 key stops / day',
+    desc: 'Late morning departures, long leisurely meals, afternoon haveli rest, zero rush.',
   },
   {
     value: 'moderate',
-    title: 'Balanced',
-    sights: '3–4 sights/day',
-    desc: 'The golden mean. Iconic landmarks in morning, vibrant bazaars by dusk.',
+    title: 'Balanced & Curated',
+    sights: '3–4 stops / day',
+    desc: 'The golden mean. Iconic palace monuments in morning, artisan bazaars by dusk.',
   },
   {
     value: 'packed',
-    title: 'Immersive & Active',
-    sights: '4–5 sights/day',
-    desc: 'Sunrise-to-sunset exploration for travelers wanting to see it all.',
+    title: 'Immersive Exploration',
+    sights: '4–5 stops / day',
+    desc: 'Sunrise-to-dusk choreography for travelers seeking to experience every hidden gem.',
   },
 ]
 
 const INTEREST_OPTIONS = [
-  { id: 'culture', label: 'Forts & Royal Heritage', icon: '🏰' },
-  { id: 'food', label: 'Regional Street Food & Thalis', icon: '🍲' },
+  { id: 'culture', label: 'Forts & Royal Havelis', icon: '🏰' },
+  { id: 'food', label: 'Royal Thalis & Street Eats', icon: '🍲' },
   { id: 'nature', label: 'Backwaters, Lakes & Flora', icon: '🌴' },
-  { id: 'adventure', label: 'Himalayan Trails & Kayaking', icon: '🏔️' },
-  { id: 'shopping', label: 'Bazaars, Handlooms & Spices', icon: '🛍️' },
+  { id: 'adventure', label: 'Himalayan Trails & Kayaks', icon: '🏔️' },
+  { id: 'shopping', label: 'Bazaars & Handblock Prints', icon: '🛍️' },
   { id: 'wellness', label: 'Ayurveda, Yoga & Ghats', icon: '🧘' },
   { id: 'photography', label: 'Golden Hour Viewpoints', icon: '📸' },
-  { id: 'family', label: 'Kid-Friendly Activities', icon: '👨‍👩‍👧' },
+  { id: 'family', label: 'Child-Friendly Leisure', icon: '👨‍👩‍👧' },
 ]
 
-const BUDGET_PRESETS = [30000, 50000, 85000, 150000, 250000]
+const BUDGET_TIERS = [
+  {
+    amount: 35000,
+    label: 'Boutique Heritage',
+    desc: 'Cozy boutique havelis, authentic street cafes & reliable private autos.',
+  },
+  {
+    amount: 50000,
+    label: 'Curated Luxury',
+    desc: 'Charming royal stays, premier thali feasts, rooftop chai & private AC sedan.',
+  },
+  {
+    amount: 85000,
+    label: 'Palace Experiential',
+    desc: 'Heritage suites, fine dining courtyards, personal guides & private chauffeur.',
+  },
+  {
+    amount: 150000,
+    label: 'Royal Bespoke VIP',
+    desc: 'Legendary palace hotels, private shikara charters, exclusive curator access.',
+  },
+]
 
 const DURATION_PRESETS = [
-  { label: 'Weekend', days: 2 },
-  { label: 'Long Weekend', days: 3 },
-  { label: 'Extended Escape', days: 5 },
-  { label: 'Full Week', days: 7 },
+  { label: 'Weekend', days: 2, note: 'Quick rejuvenation' },
+  { label: 'Long Weekend', days: 3, note: 'The quintessential escape' },
+  { label: 'Extended Escape', days: 5, note: 'Deep cultural immersion' },
+  { label: 'Grand Tour', days: 7, note: 'Comprehensive regional discovery' },
 ]
 
 function TripStudioContent() {
@@ -119,33 +184,48 @@ function TripStudioContent() {
   const [formData, setFormData] = useState<TripFormData>({
     title: '',
     destination: 'Jaipur, Rajasthan',
-    startDate: new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0],
-    endDate: new Date(Date.now() + 86400000 * 10).toISOString().split('T')[0],
+    startDate: '2026-11-25',
+    endDate: '2026-11-28',
     budgetINR: 50000,
-    travelers: { adults: 2, children: 1 },
+    travelers: {
+      adults: 2,
+      children: 1,
+    },
     interests: ['culture', 'food', 'photography'],
     pace: 'moderate',
   })
 
   const [selectedPartyType, setSelectedPartyType] = useState('family')
   const [generating, setGenerating] = useState(false)
-  const [loadingPhase, setLoadingPhase] = useState('Consulting Google Places database...')
+  const [loadingPhase, setLoadingPhase] = useState('')
   const [error, setError] = useState('')
 
-  // Pre-fill destination from query param if available
   useEffect(() => {
     const destParam = searchParams.get('dest')
     if (destParam) {
-      const decoded = decodeURIComponent(destParam).trim()
-      if (decoded) {
+      const match = CURATED_DESTINATIONS.find((d) =>
+        d.name.toLowerCase().includes(destParam.toLowerCase())
+      )
+      if (match) {
         setFormData((prev) => ({
           ...prev,
-          destination: decoded,
-          title: `${decoded.split(',')[0]} Vacation`,
+          destination: match.name,
+          title: `${match.name.split(',')[0]} Journey`,
+          budgetINR: match.typicalBudget,
+        }))
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          destination: destParam,
+          title: `${destParam.split(',')[0]} Journey`,
         }))
       }
     }
   }, [searchParams])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [step])
 
   const tripDays = Math.max(
     1,
@@ -287,537 +367,637 @@ function TripStudioContent() {
     }
   }
 
+  // Active Destination Image Lookup for Live Dossier Preview
+  const matchedDest = CURATED_DESTINATIONS.find((d) =>
+    formData.destination.toLowerCase().includes(d.name.split(',')[0].toLowerCase())
+  ) || CURATED_DESTINATIONS[0]
+
   return (
-    <div className='max-w-4xl mx-auto space-y-8 pb-16'>
+    <div className='max-w-7xl mx-auto space-y-10 pb-20'>
       
-      {/* Step Header & Progress */}
-      <div className='space-y-4'>
-        <div className='flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4'>
+      {/* Editorial Header & Minimalist Stepper */}
+      <div className='space-y-4 border-b border-white/10 pb-6'>
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
           <div>
-            <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold'>
-              Trip Planning Studio
+            <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold block mb-1'>
+              Couture Travel Atelier
             </span>
-            <h1 className='font-serif text-3xl sm:text-4xl font-bold text-white mt-1'>
+            <h1 className='font-serif text-3xl sm:text-5xl font-bold text-white'>
               Design Your <span className='text-gold-shine'>Journey</span>
             </h1>
           </div>
-          <div className='flex items-center gap-2 font-mono text-xs text-gray-400'>
-            <span>Step 0{step} of 0{totalSteps}</span>
-            <span className='text-gray-600'>•</span>
-            <span className='text-primary font-bold'>{Math.round((step / totalSteps) * 100)}% Complete</span>
+
+          <div className='flex items-center gap-3 font-mono text-xs text-gray-400'>
+            <span className='px-3 py-1 rounded-full stamp-badge text-primary font-bold'>
+              Step 0{step} of 0{totalSteps}
+            </span>
+            <span>·</span>
+            <span>{Math.round((step / totalSteps) * 100)}% Curated</span>
           </div>
         </div>
 
-        {/* Golden Progress Bar */}
-        <div className='grid grid-cols-4 gap-2'>
+        {/* Minimalist Foil Step Indicator */}
+        <div className='grid grid-cols-4 gap-2 pt-2'>
           {[
             { num: 1, title: 'Destination' },
             { num: 2, title: 'Dates & Party' },
-            { num: 3, title: 'Budget & Pace' },
-            { num: 4, title: 'Flavors & Review' },
+            { num: 3, title: 'Budget & Rhythm' },
+            { num: 4, title: 'Review Dossier' },
           ].map((s) => (
             <div
               key={s.num}
               onClick={() => s.num < step && setStep(s.num)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                s.num <= step
-                  ? 'bg-primary gold-glow'
-                  : 'bg-white/10'
-              } ${s.num < step ? 'cursor-pointer hover:opacity-80' : ''}`}
-            />
+              className='space-y-1.5 cursor-pointer group'
+            >
+              <div
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  s.num <= step
+                    ? 'bg-primary gold-glow'
+                    : 'bg-white/10 group-hover:bg-white/20'
+                }`}
+              />
+              <span className={`text-[10px] font-mono uppercase tracking-wider block ${
+                s.num === step ? 'text-primary font-bold' : 'text-gray-500'
+              }`}>
+                0{s.num}. {s.title}
+              </span>
+            </div>
           ))}
         </div>
       </div>
 
       {error && (
-        <div className='p-4 rounded-xl bg-red-950/40 border border-red-800 text-red-300 text-sm font-sans flex items-center gap-2'>
-          <span>✕</span>
+        <div className='p-4 rounded-2xl bg-red-950/40 border border-red-800 text-red-300 text-sm font-sans flex items-center gap-3'>
+          <span className='text-lg'>⚠</span>
           <span>{error}</span>
         </div>
       )}
 
-      {/* STEP 1: DESTINATION */}
-      {step === 1 && (
-        <div className='space-y-6'>
-          <div className='space-y-2'>
-            <h2 className='font-serif text-2xl font-bold text-white'>
-              Where would you like to explore?
-            </h2>
-            <p className='text-sm text-gray-400'>
-              Select from curated luxury domestic retreats or type any destination across India.
-            </p>
-          </div>
+      {/* LIVING SPLIT-CANVAS: 7 COLS CONSULTATION / 5 COLS LIVE DOSSIER PREVIEW */}
+      <div className='grid lg:grid-cols-12 gap-10 items-start'>
+        
+        {/* LEFT COLUMN: ACTIVE STEP INPUTS */}
+        <div className='lg:col-span-7 space-y-8'>
+          
+          {/* STEP 1: DESTINATION SELECTION */}
+          {step === 1 && (
+            <div className='space-y-6'>
+              <div className='space-y-1.5'>
+                <h2 className='font-serif text-2xl sm:text-3xl font-bold text-white'>
+                  Where will your spirit wander?
+                </h2>
+                <p className='text-xs sm:text-sm text-gray-400'>
+                  Select a handpicked royal heritage retreat or specify any destination across India.
+                </p>
+              </div>
 
-          {/* Search Input */}
-          <div className='relative'>
-            <MapPin className='w-5 h-5 absolute left-4 top-4 text-primary' />
-            <Input
-              value={formData.destination}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  destination: e.target.value,
-                  title: `${e.target.value.split(',')[0]} Vacation`,
-                }))
-                setError('')
-              }}
-              placeholder='e.g., Jaipur, Munnar, Goa, Udaipur, Coorg, Hampi'
-              className='pl-12 h-14 text-base glass-strong border-white/15 focus:border-primary/60 text-white rounded-2xl'
-            />
-          </div>
+              {/* Destination Search Bar */}
+              <div className='relative'>
+                <MapPin className='w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary' />
+                <Input
+                  value={formData.destination}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      destination: e.target.value,
+                      title: `${e.target.value.split(',')[0]} Journey`,
+                    }))
+                    setError('')
+                  }}
+                  placeholder='e.g., Jaipur, Munnar, Goa, Udaipur, Coorg, Hampi'
+                  className='pl-12 h-14 text-sm sm:text-base bg-[#161410] border-white/15 focus:border-primary text-white rounded-2xl'
+                />
+              </div>
 
-          {/* Destination Cards */}
-          <div className='space-y-3 pt-2'>
-            <label className='text-xs font-mono uppercase tracking-wider text-gray-400'>
-              ✦ Handpicked Domestic Retreats
-            </label>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-              {CURATED_DESTINATIONS.map((d) => {
-                const isSelected = formData.destination.toLowerCase().includes(d.name.split(',')[0].toLowerCase())
-                return (
-                  <div
-                    key={d.name}
-                    onClick={() => handleDestinationSelect(d.name, d.typicalBudget)}
-                    className={`group relative rounded-2xl overflow-hidden border p-3 cursor-pointer transition-all duration-300 glass-dark ${
-                      isSelected
-                        ? 'border-primary ring-2 ring-primary/30 gold-glow scale-[1.02]'
-                        : 'border-white/10 hover:border-primary/40'
-                    }`}
-                  >
-                    <div className='aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-black relative'>
-                      <img
-                        src={d.image}
-                        alt={d.name}
-                        className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
-                      />
-                      {isSelected && (
-                        <div className='absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-xs shadow-md'>
-                          <Check className='w-3.5 h-3.5 stroke-[3]' />
+              {/* Handpicked Destinations Cards */}
+              <div className='space-y-3 pt-2'>
+                <span className='text-xs font-mono uppercase tracking-widest text-primary/80 font-bold block'>
+                  ✦ Handpicked Domestic Retreats
+                </span>
+                
+                <div className='grid sm:grid-cols-2 gap-4'>
+                  {CURATED_DESTINATIONS.map((d) => {
+                    const isSelected = formData.destination.toLowerCase().includes(d.name.split(',')[0].toLowerCase())
+                    return (
+                      <div
+                        key={d.name}
+                        onClick={() => handleDestinationSelect(d.name, d.typicalBudget)}
+                        className={`group relative rounded-3xl overflow-hidden border p-3.5 cursor-pointer transition-all duration-300 ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 ring-2 ring-primary/40 gold-glow'
+                            : 'border-white/10 glass-strong hover:border-primary/40'
+                        }`}
+                      >
+                        <div className='aspect-[16/10] rounded-2xl overflow-hidden mb-3 bg-black relative'>
+                          <Image
+                            src={d.image}
+                            alt={d.name}
+                            fill
+                            className='object-cover group-hover:scale-105 transition-transform duration-700'
+                          />
+                          <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent' />
+                          
+                          <div className='absolute bottom-2.5 left-2.5 z-10'>
+                            <span className='text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-amber-300 border border-amber-500/30'>
+                              {d.season}
+                            </span>
+                          </div>
+
+                          {isSelected && (
+                            <div className='absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-xs shadow-md'>
+                              <Check className='w-3.5 h-3.5 stroke-[3]' />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className='font-serif font-bold text-base text-white'>
-                      {d.name}
-                    </div>
-                    <p className='text-xs text-gray-400 mt-0.5 line-clamp-1'>
-                      {d.tag}
-                    </p>
-                    <div className='mt-2 text-xs font-mono text-primary font-semibold'>
-                      From ₹{(d.typicalBudget).toLocaleString()}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* STEP 2: DATES & PARTY */}
-      {step === 2 && (
-        <div className='space-y-8'>
-          <div className='space-y-2'>
-            <h2 className='font-serif text-2xl font-bold text-white'>
-              When are you traveling, and who is joining?
-            </h2>
-            <p className='text-sm text-gray-400'>
-              We calibrate opening hours, dining ambiance, and pacing for your exact party.
-            </p>
-          </div>
-
-          {/* Dates Card */}
-          <div className='p-6 rounded-3xl border border-white/10 glass-strong space-y-4'>
-            <div className='flex flex-wrap items-center justify-between gap-2'>
-              <span className='font-mono text-xs uppercase tracking-wider text-gray-400'>
-                Trip Duration
-              </span>
-              <span className='font-mono text-xs px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 font-semibold'>
-                {tripDays} Days ({tripDays > 1 ? tripDays - 1 : 0} Nights)
-              </span>
-            </div>
-
-            {/* Quick Duration Presets */}
-            <div className='flex flex-wrap gap-2 pt-1'>
-              <span className='text-xs font-mono text-gray-400 self-center mr-1'>Presets:</span>
-              {DURATION_PRESETS.map((dp) => (
-                <button
-                  key={dp.days}
-                  type='button'
-                  onClick={() => applyDurationPreset(dp.days)}
-                  className={`text-xs font-mono px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    tripDays === dp.days
-                      ? 'bg-primary text-black font-bold border-primary shadow-sm gold-glow'
-                      : 'glass border-white/10 text-gray-300 hover:border-primary/40'
-                  }`}
-                >
-                  {dp.label} ({dp.days}D)
-                </button>
-              ))}
-            </div>
-
-            <div className='grid sm:grid-cols-2 gap-4 pt-2'>
-              <div className='space-y-2'>
-                <Label className='text-xs font-mono text-gray-400'>Start Date</Label>
-                <Input
-                  type='date'
-                  value={formData.startDate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
-                  className='h-12 rounded-xl glass border-white/15 text-white'
-                />
-              </div>
-              <div className='space-y-2'>
-                <Label className='text-xs font-mono text-gray-400'>End Date</Label>
-                <Input
-                  type='date'
-                  value={formData.endDate}
-                  min={formData.startDate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, endDate: e.target.value }))}
-                  className='h-12 rounded-xl glass border-white/15 text-white'
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Travel Party Archetypes */}
-          <div className='space-y-4'>
-            <Label className='text-xs font-mono uppercase tracking-wider text-gray-400'>
-              Travel Party Type
-            </Label>
-            <div className='grid sm:grid-cols-2 gap-4'>
-              {PARTY_TYPES.map((p) => {
-                const isSelected = selectedPartyType === p.id
-                return (
-                  <div
-                    key={p.id}
-                    onClick={() => handlePartyTypeSelect(p.id)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-primary bg-primary/10 gold-glow'
-                        : 'border-white/10 glass-dark hover:border-white/20'
-                    }`}
-                  >
-                    <div className='flex items-center justify-between'>
-                      <div className='font-serif font-bold text-base text-white'>
-                        {p.label}
+                        <div className='font-serif font-bold text-lg text-white group-hover:text-gold-shine transition-colors'>
+                          {d.name}
+                        </div>
+                        <p className='text-xs text-gray-400 mt-1 line-clamp-1'>
+                          {d.tag}
+                        </p>
+                        <div className='mt-2.5 flex items-center justify-between text-xs font-mono'>
+                          <span className='text-gray-500 uppercase text-[10px]'>Typical Spend</span>
+                          <span className='text-emerald-400 font-bold'>
+                            From ₹{d.typicalBudget.toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      {isSelected && <Check className='w-4 h-4 text-primary' />}
-                    </div>
-                    <p className='text-xs text-gray-400 mt-1 font-sans'>
-                      {p.desc}
-                    </p>
-                  </div>
-                )
-              })}
+                    )
+                  })}
+                </div>
+              </div>
             </div>
+          )}
 
-            {/* Custom Counters */}
-            <div className='p-5 rounded-2xl border border-white/10 glass-dark flex flex-wrap items-center justify-between gap-4'>
-              <div className='flex items-center gap-6'>
-                <div>
-                  <span className='text-xs font-mono text-gray-400 block'>Adults</span>
-                  <div className='flex items-center gap-3 mt-1'>
-                    <button
-                      type='button'
-                      onClick={() => setFormData(prev => ({ ...prev, travelers: { ...prev.travelers, adults: Math.max(1, prev.travelers.adults - 1) } }))}
-                      className='w-8 h-8 rounded-lg glass border border-white/15 text-white flex items-center justify-center font-bold hover:bg-white/10 cursor-pointer'
-                    >-</button>
-                    <span className='font-mono font-bold text-base w-6 text-center text-white'>{formData.travelers.adults}</span>
-                    <button
-                      type='button'
-                      onClick={() => setFormData(prev => ({ ...prev, travelers: { ...prev.travelers, adults: Math.min(10, prev.travelers.adults + 1) } }))}
-                      className='w-8 h-8 rounded-lg glass border border-white/15 text-white flex items-center justify-center font-bold hover:bg-white/10 cursor-pointer'
-                    >+</button>
+          {/* STEP 2: DATES, SEASONALITY & TRAVEL PARTY */}
+          {step === 2 && (
+            <div className='space-y-8'>
+              
+              <div className='space-y-1.5'>
+                <h2 className='font-serif text-2xl sm:text-3xl font-bold text-white'>
+                  When are you traveling, and who is joining?
+                </h2>
+                <p className='text-xs sm:text-sm text-gray-400'>
+                  We choreograph opening hours, daylight pacing, and transport for your exact party.
+                </p>
+              </div>
+
+              {/* Duration Presets as Boarding Tokens */}
+              <div className='p-6 rounded-3xl border border-[rgba(212,165,116,0.25)] glass-strong space-y-5 gold-glow'>
+                
+                <div className='flex items-center justify-between'>
+                  <span className='text-xs font-mono uppercase tracking-widest text-primary font-bold flex items-center gap-2'>
+                    <Calendar className='w-4 h-4' /> Journey Duration
+                  </span>
+                  <span className='font-serif text-sm font-bold text-white px-3 py-1 rounded-full bg-primary/20 border border-primary/30'>
+                    {tripDays} Days ({tripDays > 1 ? tripDays - 1 : 0} Nights)
+                  </span>
+                </div>
+
+                {/* Preset Chips */}
+                <div className='grid grid-cols-2 sm:grid-cols-4 gap-2.5'>
+                  {DURATION_PRESETS.map((dp) => {
+                    const isSelected = tripDays === dp.days
+                    return (
+                      <button
+                        key={dp.days}
+                        type='button'
+                        onClick={() => applyDurationPreset(dp.days)}
+                        className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-primary text-black font-bold border-primary shadow-md gold-glow'
+                            : 'glass border-white/10 text-gray-300 hover:border-primary/40'
+                        }`}
+                      >
+                        <div className='text-xs font-mono font-bold'>{dp.label}</div>
+                        <div className={`text-[10px] mt-0.5 ${isSelected ? 'text-black/80' : 'text-gray-500'}`}>
+                          {dp.days} Full Days
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Calendar Date Pickers */}
+                <div className='grid sm:grid-cols-2 gap-4 pt-2 border-t border-white/10'>
+                  <div className='space-y-2'>
+                    <Label className='text-xs font-mono text-gray-300 flex items-center gap-1.5'>
+                      <span>Departure Date</span>
+                    </Label>
+                    <Input
+                      type='date'
+                      value={formData.startDate}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
+                      className='h-12 rounded-xl bg-black/50 border-white/15 text-white font-mono text-xs focus:border-primary'
+                    />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <Label className='text-xs font-mono text-gray-300 flex items-center gap-1.5'>
+                      <span>Return Date</span>
+                    </Label>
+                    <Input
+                      type='date'
+                      value={formData.endDate}
+                      min={formData.startDate}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, endDate: e.target.value }))}
+                      className='h-12 rounded-xl bg-black/50 border-white/15 text-white font-mono text-xs focus:border-primary'
+                    />
                   </div>
                 </div>
 
-                <div>
-                  <span className='text-xs font-mono text-gray-400 block'>Children</span>
-                  <div className='flex items-center gap-3 mt-1'>
-                    <button
-                      type='button'
-                      onClick={() => setFormData(prev => ({ ...prev, travelers: { ...prev.travelers, children: Math.max(0, prev.travelers.children - 1) } }))}
-                      className='w-8 h-8 rounded-lg glass border border-white/15 text-white flex items-center justify-center font-bold hover:bg-white/10 cursor-pointer'
-                    >-</button>
-                    <span className='font-mono font-bold text-base w-6 text-center text-white'>{formData.travelers.children}</span>
-                    <button
-                      type='button'
-                      onClick={() => setFormData(prev => ({ ...prev, travelers: { ...prev.travelers, children: Math.min(8, prev.travelers.children + 1) } }))}
-                      className='w-8 h-8 rounded-lg glass border border-white/15 text-white flex items-center justify-center font-bold hover:bg-white/10 cursor-pointer'
-                    >+</button>
-                  </div>
+                {/* Seasonality Tip */}
+                <div className='p-3 rounded-xl bg-[#2d4a3e]/30 border border-[#2d4a3e]/60 text-xs font-sans text-emerald-300 flex items-center gap-2'>
+                  <CloudSun className='w-4 h-4 text-emerald-400 flex-shrink-0' />
+                  <span>
+                    Optimal Season: November – March offers pleasant 22°C–26°C daytime temperatures and cool palace evenings.
+                  </span>
                 </div>
+
               </div>
 
-              <div className='text-xs font-mono text-gray-400'>
-                Total Party: <strong className='text-white'>{formData.travelers.adults + formData.travelers.children} Travelers</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* STEP 3: BUDGET & PACE */}
-      {step === 3 && (
-        <div className='space-y-8'>
-          <div className='space-y-2'>
-            <h2 className='font-serif text-2xl font-bold text-white'>
-              Set Your Budget Guardrails & Travel Pace
-            </h2>
-            <p className='text-sm text-gray-400'>
-              Every rupee is strictly accounted for. No surprise costs or unrealistic itineraries.
-            </p>
-          </div>
-
-          {/* Budget Card */}
-          <div className='p-6 sm:p-8 rounded-3xl border border-white/10 glass-strong space-y-6'>
-            <div className='flex flex-wrap items-center justify-between gap-4'>
-              <div>
-                <span className='font-mono text-xs uppercase tracking-wider text-primary font-bold'>
-                  Total Trip Budget (INR)
+              {/* Travel Party Archetypes */}
+              <div className='space-y-4'>
+                <span className='text-xs font-mono uppercase tracking-widest text-primary font-bold block'>
+                  Select Travel Party Archetype
                 </span>
-                <div className='font-mono text-3xl sm:text-4xl font-bold text-white mt-1'>
-                  ₹{formData.budgetINR.toLocaleString()}
-                </div>
-              </div>
-              <div className='text-right'>
-                <span className='font-mono text-xs text-gray-400 block'>Daily Allowance</span>
-                <span className='font-mono text-lg font-bold text-emerald-400'>
-                  ~₹{dailyBudget.toLocaleString()}/day
-                </span>
-              </div>
-            </div>
 
-            {/* Tactile Range Slider */}
-            <div className='space-y-2 pt-2'>
-              <div className='flex items-center justify-between text-xs font-mono text-gray-400'>
-                <span>₹15,000</span>
-                <span className='text-primary font-bold'>Drag to Adjust</span>
-                <span>₹3,00,000</span>
-              </div>
-              <input
-                type='range'
-                min={15000}
-                max={300000}
-                step={5000}
-                value={formData.budgetINR}
-                onChange={(e) => setFormData((prev) => ({ ...prev, budgetINR: Number(e.target.value) }))}
-                className='w-full h-2.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#d4a574]'
-              />
-            </div>
-
-            {/* Quick Presets */}
-            <div className='space-y-2 pt-2'>
-              <span className='text-xs font-mono text-gray-400'>Quick Presets:</span>
-              <div className='flex flex-wrap gap-2'>
-                {BUDGET_PRESETS.map((amt) => (
-                  <button
-                    key={amt}
-                    type='button'
-                    onClick={() => setFormData((prev) => ({ ...prev, budgetINR: amt }))}
-                    className={`px-4 py-2 rounded-xl text-xs font-mono font-medium transition-all cursor-pointer ${
-                      formData.budgetINR === amt
-                        ? 'bg-primary text-black font-bold shadow-md gold-glow'
-                        : 'glass border border-white/15 text-gray-300 hover:border-primary/50'
-                    }`}
-                  >
-                    ₹{(amt / 1000).toFixed(0)}k
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Input */}
-            <div className='space-y-2 pt-2'>
-              <Label className='text-xs font-mono text-gray-400'>Exact Budget (₹)</Label>
-              <Input
-                type='number'
-                min={5000}
-                step={2000}
-                value={formData.budgetINR}
-                onChange={(e) => setFormData((prev) => ({ ...prev, budgetINR: Math.max(1000, parseInt(e.target.value) || 0) }))}
-                className='h-12 rounded-xl glass border-white/15 text-white font-mono text-base'
-              />
-            </div>
-          </div>
-
-          {/* Travel Pace */}
-          <div className='space-y-3'>
-            <Label className='text-xs font-mono uppercase tracking-wider text-gray-400'>
-              Desired Daily Pace
-            </Label>
-            <div className='grid sm:grid-cols-3 gap-4'>
-              {PACES.map((p) => {
-                const isSelected = formData.pace === p.value
-                return (
-                  <div
-                    key={p.value}
-                    onClick={() => setFormData((prev) => ({ ...prev, pace: p.value as any }))}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-primary bg-primary/10 gold-glow'
-                        : 'border-white/10 glass-dark hover:border-white/20'
-                    }`}
-                  >
-                    <div className='flex items-center justify-between'>
-                      <div className='font-serif font-bold text-base text-white'>
-                        {p.title}
+                <div className='grid sm:grid-cols-2 gap-4'>
+                  {PARTY_TYPES.map((p) => {
+                    const isSelected = selectedPartyType === p.id
+                    return (
+                      <div
+                        key={p.id}
+                        onClick={() => handlePartyTypeSelect(p.id)}
+                        className={`p-5 rounded-3xl border cursor-pointer transition-all duration-300 space-y-2 ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 ring-2 ring-primary/40 gold-glow'
+                            : 'border-white/10 glass-strong hover:border-primary/40'
+                        }`}
+                      >
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center gap-2.5'>
+                            <span className='text-2xl'>{p.icon}</span>
+                            <span className='font-serif font-bold text-base text-white'>
+                              {p.label}
+                            </span>
+                          </div>
+                          {isSelected && <Check className='w-4 h-4 text-primary' />}
+                        </div>
+                        <p className='text-xs text-gray-400 font-sans leading-relaxed'>
+                          {p.desc}
+                        </p>
                       </div>
-                      {isSelected && <Check className='w-4 h-4 text-primary' />}
+                    )
+                  })}
+                </div>
+
+                {/* Tactile Counters for Adults & Children */}
+                <div className='p-6 rounded-3xl border border-white/10 glass-strong flex flex-wrap items-center justify-between gap-6'>
+                  <div className='flex items-center gap-8'>
+                    <div>
+                      <span className='text-xs font-mono text-gray-400 block uppercase'>Adults (Age 12+)</span>
+                      <div className='flex items-center gap-3 mt-2'>
+                        <button
+                          type='button'
+                          onClick={() => setFormData((prev) => ({ ...prev, travelers: { ...prev.travelers, adults: Math.max(1, prev.travelers.adults - 1) } }))}
+                          className='w-9 h-9 rounded-xl glass border border-white/20 text-white flex items-center justify-center font-bold text-lg hover:border-primary cursor-pointer'
+                        >–</button>
+                        <span className='font-serif font-bold text-xl w-6 text-center text-white'>
+                          {formData.travelers.adults}
+                        </span>
+                        <button
+                          type='button'
+                          onClick={() => setFormData((prev) => ({ ...prev, travelers: { ...prev.travelers, adults: Math.min(10, prev.travelers.adults + 1) } }))}
+                          className='w-9 h-9 rounded-xl glass border border-white/20 text-white flex items-center justify-center font-bold text-lg hover:border-primary cursor-pointer'
+                        >+</button>
+                      </div>
                     </div>
-                    <div className='font-mono text-xs font-bold text-primary mt-1'>
-                      {p.sights}
+
+                    <div className='border-l border-white/10 pl-8'>
+                      <span className='text-xs font-mono text-gray-400 block uppercase'>Children (Under 12)</span>
+                      <div className='flex items-center gap-3 mt-2'>
+                        <button
+                          type='button'
+                          onClick={() => setFormData((prev) => ({ ...prev, travelers: { ...prev.travelers, children: Math.max(0, prev.travelers.children - 1) } }))}
+                          className='w-9 h-9 rounded-xl glass border border-white/20 text-white flex items-center justify-center font-bold text-lg hover:border-primary cursor-pointer'
+                        >–</button>
+                        <span className='font-serif font-bold text-xl w-6 text-center text-white'>
+                          {formData.travelers.children}
+                        </span>
+                        <button
+                          type='button'
+                          onClick={() => setFormData((prev) => ({ ...prev, travelers: { ...prev.travelers, children: Math.min(8, prev.travelers.children + 1) } }))}
+                          className='w-9 h-9 rounded-xl glass border border-white/20 text-white flex items-center justify-center font-bold text-lg hover:border-primary cursor-pointer'
+                        >+</button>
+                      </div>
                     </div>
-                    <p className='text-xs text-gray-400 mt-2 font-sans leading-relaxed'>
-                      {p.desc}
-                    </p>
                   </div>
-                )
-              })}
+
+                  <div className='text-right font-mono text-xs text-gray-400'>
+                    <span>Total Party: </span>
+                    <strong className='font-serif text-lg text-white ml-1'>
+                      {formData.travelers.adults + formData.travelers.children} Travelers
+                    </strong>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* STEP 4: FLAVORS & REVIEW */}
-      {step === 4 && (
-        <div className='space-y-8'>
-          <div className='space-y-2'>
-            <h2 className='font-serif text-2xl font-bold text-white'>
-              Select Your Travel Flavors & Review Plan
-            </h2>
-            <p className='text-sm text-gray-400'>
-              Tailor the AI prompt to focus on what your party loves most.
-            </p>
-          </div>
+          {/* STEP 3: BUDGET TIERS & DAILY RHYTHM */}
+          {step === 3 && (
+            <div className='space-y-8'>
+              <div className='space-y-1.5'>
+                <h2 className='font-serif text-2xl sm:text-3xl font-bold text-white'>
+                  What is your target budget and daily pace?
+                </h2>
+                <p className='text-xs sm:text-sm text-gray-400'>
+                  We balance activities, entry permits, dining, and private transit within your exact target.
+                </p>
+              </div>
 
-          {/* Interest Chips */}
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between'>
-              <Label className='text-xs font-mono uppercase tracking-wider text-gray-400'>
-                Interests & Experiences (Select all that apply)
-              </Label>
-              <button
+              {/* Budget Tiers */}
+              <div className='space-y-4'>
+                <span className='text-xs font-mono uppercase tracking-widest text-primary font-bold block'>
+                  Select Experience Tier (Total Ground Budget)
+                </span>
+
+                <div className='grid sm:grid-cols-2 gap-4'>
+                  {BUDGET_TIERS.map((tier) => {
+                    const isSelected = formData.budgetINR === tier.amount
+                    return (
+                      <div
+                        key={tier.amount}
+                        onClick={() => setFormData((prev) => ({ ...prev, budgetINR: tier.amount }))}
+                        className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-2 ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 ring-2 ring-primary/40 gold-glow'
+                            : 'border-white/10 glass-strong hover:border-primary/40'
+                        }`}
+                      >
+                        <div className='flex items-center justify-between'>
+                          <span className='font-serif text-xl font-bold text-white'>
+                            ₹{tier.amount.toLocaleString()}
+                          </span>
+                          <span className='px-2.5 py-0.5 rounded-full stamp-badge text-[10px] text-primary font-bold'>
+                            {tier.label}
+                          </span>
+                        </div>
+                        <p className='text-xs text-gray-400 font-sans leading-relaxed'>
+                          {tier.desc}
+                        </p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Pacing Architecture */}
+              <div className='space-y-4'>
+                <span className='text-xs font-mono uppercase tracking-widest text-primary font-bold block'>
+                  Daily Touring Rhythm & Pace
+                </span>
+
+                <div className='grid sm:grid-cols-3 gap-4'>
+                  {PACES.map((p) => {
+                    const isSelected = formData.pace === p.value
+                    return (
+                      <div
+                        key={p.value}
+                        onClick={() => setFormData((prev) => ({ ...prev, pace: p.value as any }))}
+                        className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-2 ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 ring-2 ring-primary/40 gold-glow'
+                            : 'border-white/10 glass-strong hover:border-primary/40'
+                        }`}
+                      >
+                        <div className='font-serif font-bold text-base text-white'>
+                          {p.title}
+                        </div>
+                        <div className='text-[11px] font-mono text-primary font-bold'>
+                          {p.sights}
+                        </div>
+                        <p className='text-xs text-gray-400 font-sans leading-relaxed'>
+                          {p.desc}
+                        </p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* STEP 4: FLAVORS, INTERESTS & REVIEW */}
+          {step === 4 && (
+            <div className='space-y-8'>
+              <div className='space-y-1.5'>
+                <h2 className='font-serif text-2xl sm:text-3xl font-bold text-white'>
+                  What flavors and passions inspire this trip?
+                </h2>
+                <p className='text-xs sm:text-sm text-gray-400'>
+                  Select the pillars that will shape your itinerary stops and dining selections.
+                </p>
+              </div>
+
+              {/* Interest Chips */}
+              <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+                {INTEREST_OPTIONS.map((opt) => {
+                  const isSelected = formData.interests.includes(opt.id)
+                  return (
+                    <button
+                      key={opt.id}
+                      type='button'
+                      onClick={() => toggleInterest(opt.id)}
+                      className={`p-4 rounded-2xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-primary bg-primary/15 text-white gold-glow ring-2 ring-primary/30'
+                          : 'border-white/10 glass-strong text-gray-300 hover:border-primary/40'
+                      }`}
+                    >
+                      <span className='text-2xl'>{opt.icon}</span>
+                      <span className='text-xs font-medium'>{opt.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Final Dossier Summary */}
+              <div className='p-6 sm:p-8 rounded-3xl border border-primary/30 glass-strong space-y-4 gold-glow'>
+                <div className='flex items-center justify-between border-b border-primary/20 pb-3'>
+                  <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold flex items-center gap-2'>
+                    ✦ Dossier Ready for Choreography
+                  </span>
+                  <span className='text-xs font-mono text-emerald-400 flex items-center gap-1'>
+                    <ShieldCheck className='w-4 h-4' /> Verified Pacing
+                  </span>
+                </div>
+
+                <div className='grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono'>
+                  <div>
+                    <span className='text-gray-500 block uppercase text-[10px]'>Destination</span>
+                    <span className='font-serif text-base font-bold text-white'>{formData.destination}</span>
+                  </div>
+                  <div>
+                    <span className='text-gray-500 block uppercase text-[10px]'>Duration</span>
+                    <span className='font-serif text-base font-bold text-white'>{tripDays} Days</span>
+                  </div>
+                  <div>
+                    <span className='text-gray-500 block uppercase text-[10px]'>Party</span>
+                    <span className='font-serif text-base font-bold text-white'>
+                      {formData.travelers.adults} Adults, {formData.travelers.children} Kids
+                    </span>
+                  </div>
+                  <div>
+                    <span className='text-gray-500 block uppercase text-[10px]'>Budget Cap</span>
+                    <span className='font-serif text-base font-bold text-emerald-400'>
+                      ₹{formData.budgetINR.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Stepper Navigation Footer */}
+          <div className='flex items-center justify-between pt-6 border-t border-white/10'>
+            {step > 1 ? (
+              <Button
                 type='button'
-                onClick={() => setFormData(prev => ({ ...prev, interests: INTEREST_OPTIONS.map(i => i.id) }))}
-                className='text-xs font-mono text-primary hover:underline cursor-pointer'
+                variant='outline'
+                onClick={() => setStep(step - 1)}
+                disabled={generating}
+                className='glass border-white/20 text-white hover:bg-white/10 text-xs sm:text-sm rounded-full px-6 py-2.5 cursor-pointer flex items-center gap-1.5'
               >
-                Select All
-              </button>
-            </div>
-            <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
-              {INTEREST_OPTIONS.map((opt) => {
-                const isSelected = formData.interests.includes(opt.id)
-                return (
-                  <button
-                    key={opt.id}
-                    type='button'
-                    onClick={() => toggleInterest(opt.id)}
-                    className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                      isSelected
-                        ? 'border-primary bg-primary/15 text-white gold-glow'
-                        : 'border-white/10 glass-dark text-gray-300 hover:border-primary/40'
-                    }`}
-                  >
-                    <span className='text-xl'>{opt.icon}</span>
-                    <span className='text-xs font-medium'>{opt.label}</span>
-                  </button>
-                )
-              })}
-            </div>
+                <ChevronLeft className='w-4 h-4' />
+                <span>Previous</span>
+              </Button>
+            ) : (
+              <div />
+            )}
+
+            {step < totalSteps ? (
+              <Button
+                type='button'
+                onClick={() => setStep(step + 1)}
+                className='bg-primary text-black font-semibold text-xs sm:text-sm px-8 py-2.5 rounded-full shadow-md gold-glow hover:bg-primary/90 flex items-center gap-2 cursor-pointer'
+              >
+                <span>Continue</span>
+                <ChevronRight className='w-4 h-4' />
+              </Button>
+            ) : (
+              <Button
+                type='button'
+                onClick={handleGenerateItinerary}
+                disabled={generating}
+                className='bg-primary text-black font-bold text-sm sm:text-base px-9 py-3 rounded-full shadow-2xl gold-glow-strong hover:bg-primary/90 flex items-center gap-2 cursor-pointer'
+              >
+                {generating ? (
+                  <span className='flex items-center gap-2'>
+                    <span className='w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin' />
+                    <span>{loadingPhase}</span>
+                  </span>
+                ) : (
+                  <>
+                    <span>Choreograph Bespoke Itinerary</span>
+                    <Sparkles className='w-4 h-4' />
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
-          {/* Luxury Review Ticket */}
-          <div className='rounded-3xl border border-primary/30 glass-strong overflow-hidden gold-glow'>
-            <div className='bg-primary/15 px-6 py-3.5 border-b border-primary/20 flex items-center justify-between'>
-              <span className='font-mono text-xs uppercase tracking-wider text-primary font-bold flex items-center gap-2'>
-                ✦ Confirmed Itinerary Dossier
-              </span>
-              <span className='font-mono text-xs text-gray-400'>Ready to Generate</span>
+        </div>
+
+        {/* RIGHT COLUMN: STICKY LIVING DOSSIER PREVIEW */}
+        <div className='lg:col-span-5 lg:sticky lg:top-28 space-y-4'>
+          
+          <div className='rounded-3xl border border-[rgba(212,165,116,0.25)] glass-strong overflow-hidden shadow-2xl gold-glow'>
+            
+            {/* Visual Destination Header */}
+            <div className='relative h-60 w-full overflow-hidden bg-black/60'>
+              <Image
+                src={matchedDest.image}
+                alt={matchedDest.name}
+                fill
+                className='object-cover scale-105'
+                priority
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-[#161410] via-black/40 to-transparent' />
+              
+              <div className='absolute top-4 left-4 z-10'>
+                <span className='px-3 py-1 rounded-full stamp-badge text-[10px] font-mono font-bold text-primary'>
+                  ✦ Live Dossier Preview
+                </span>
+              </div>
+
+              <div className='absolute bottom-4 left-4 right-4 z-10'>
+                <div className='flex items-center gap-1.5 text-xs font-mono text-primary'>
+                  <MapPin className='w-3.5 h-3.5' /> {formData.destination}
+                </div>
+                <h3 className='font-serif text-2xl font-bold text-white'>
+                  {matchedDest.name.split(',')[0]} Exploration
+                </h3>
+              </div>
             </div>
 
-            <div className='p-6 space-y-4'>
-              <div className='grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono'>
+            {/* Live Dossier Summary Body */}
+            <div className='p-6 space-y-4 text-xs font-mono'>
+              
+              <div className='grid grid-cols-2 gap-3 pb-3 border-b border-white/10'>
                 <div>
-                  <span className='text-gray-500 block'>Destination</span>
-                  <span className='font-bold text-white'>{formData.destination}</span>
+                  <span className='text-gray-500 block uppercase text-[10px]'>Duration</span>
+                  <span className='font-serif text-base font-bold text-white mt-0.5 block'>
+                    {tripDays} Days ({tripDays > 1 ? tripDays - 1 : 0} Nights)
+                  </span>
                 </div>
                 <div>
-                  <span className='text-gray-500 block'>Duration</span>
-                  <span className='font-bold text-white'>{tripDays} Days</span>
+                  <span className='text-gray-500 block uppercase text-[10px]'>Travel Dates</span>
+                  <span className='text-gray-200 mt-0.5 block truncate'>
+                    {formData.startDate} – {formData.endDate}
+                  </span>
                 </div>
+              </div>
+
+              <div className='grid grid-cols-2 gap-3 pb-3 border-b border-white/10'>
                 <div>
-                  <span className='text-gray-500 block'>Party</span>
-                  <span className='font-bold text-white'>
+                  <span className='text-gray-500 block uppercase text-[10px]'>Party Style</span>
+                  <span className='text-gray-200 mt-0.5 block'>
                     {formData.travelers.adults} Adults, {formData.travelers.children} Kids
                   </span>
                 </div>
                 <div>
-                  <span className='text-gray-500 block'>Target Budget</span>
-                  <span className='font-bold text-emerald-400'>
+                  <span className='text-gray-500 block uppercase text-[10px]'>Target Budget</span>
+                  <span className='font-serif text-base font-bold text-emerald-400 mt-0.5 block'>
                     ₹{formData.budgetINR.toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              <div className='pt-3 border-t border-white/10 text-xs font-sans text-gray-400 flex flex-wrap items-center justify-between gap-2'>
-                <span className='flex items-center gap-1.5'>
-                  <ShieldCheck className='w-4 h-4 text-emerald-400' /> Google Places opening hours verified
-                </span>
-                <span className='font-mono text-primary'>
-                  Pace: {formData.pace.toUpperCase()}
-                </span>
+              <div className='space-y-1.5 pb-3 border-b border-white/10'>
+                <span className='text-gray-500 block uppercase text-[10px]'>Daily Rhythm</span>
+                <div className='flex items-center justify-between text-gray-300'>
+                  <span className='capitalize font-bold text-primary'>{formData.pace} Pace</span>
+                  <span>~₹{dailyBudget.toLocaleString()}/day</span>
+                </div>
               </div>
+
+              <div className='pt-1 text-[11px] font-sans text-gray-400 flex items-center gap-2'>
+                <ShieldCheck className='w-4 h-4 text-emerald-400 flex-shrink-0' />
+                <span>Google Places hours and route choreography active.</span>
+              </div>
+
             </div>
+
           </div>
+
         </div>
-      )}
 
-      {/* Navigation Footer */}
-      <div className='flex items-center justify-between pt-6 border-t border-white/10'>
-        {step > 1 ? (
-          <Button
-            type='button'
-            variant='outline'
-            onClick={() => setStep(step - 1)}
-            disabled={generating}
-            className='glass border-white/20 text-white hover:bg-white/10 text-sm gap-1.5 rounded-full px-6 py-2.5 cursor-pointer'
-          >
-            <ChevronLeft className='w-4 h-4' />
-            Previous
-          </Button>
-        ) : (
-          <div />
-        )}
-
-        {step < totalSteps ? (
-          <Button
-            type='button'
-            onClick={() => setStep(step + 1)}
-            className='bg-primary text-black font-semibold text-sm px-7 py-2.5 rounded-full shadow-md gold-glow hover:bg-primary/90 gap-1.5 cursor-pointer'
-          >
-            Next Step
-            <ChevronRight className='w-4 h-4' />
-          </Button>
-        ) : (
-          <Button
-            type='button'
-            onClick={handleGenerateItinerary}
-            disabled={generating}
-            className='bg-primary text-black font-bold text-base px-8 py-3 rounded-full shadow-xl gold-glow-strong hover:bg-primary/90 gap-2 cursor-pointer'
-          >
-            {generating ? (
-              <span className='flex items-center gap-2'>
-                <span className='w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin' />
-                {loadingPhase}
-              </span>
-            ) : (
-              <>
-                Generate Itinerary with AI
-                <ArrowRight className='w-5 h-5' />
-              </>
-            )}
-          </Button>
-        )}
       </div>
 
     </div>
