@@ -130,9 +130,9 @@ export default function ActivitySwapModal({
 
   return (
     <div className='fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200'>
-      
+
       <div className='relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-primary/30 glass-strong shadow-2xl gold-glow overflow-hidden'>
-        
+
         {/* Header Ribbon */}
         <div className='bg-primary/15 px-6 py-4 border-b border-primary/20 flex items-center justify-between'>
           <div className='flex items-center gap-2'>
@@ -173,21 +173,19 @@ export default function ActivitySwapModal({
           <div className='flex items-center gap-2'>
             <button
               onClick={() => setActiveTab('suggestions')}
-              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
-                activeTab === 'suggestions'
-                  ? 'bg-primary text-black font-bold shadow-md gold-glow'
-                  : 'glass text-gray-300 hover:border-primary/40'
-              }`}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${activeTab === 'suggestions'
+                ? 'bg-primary text-black font-bold shadow-md gold-glow'
+                : 'glass text-gray-300 hover:border-primary/40'
+                }`}
             >
               ✦ Verified Alternatives
             </button>
             <button
               onClick={() => setActiveTab('custom')}
-              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
-                activeTab === 'custom'
-                  ? 'bg-primary text-black font-bold shadow-md gold-glow'
-                  : 'glass text-gray-300 hover:border-primary/40'
-              }`}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${activeTab === 'custom'
+                ? 'bg-primary text-black font-bold shadow-md gold-glow'
+                : 'glass text-gray-300 hover:border-primary/40'
+                }`}
             >
               + Add Custom Spot
             </button>
@@ -196,7 +194,7 @@ export default function ActivitySwapModal({
 
         {/* Modal Body */}
         <div className='flex-1 overflow-y-auto p-6 space-y-4'>
-          
+
           {activeTab === 'suggestions' && (
             <>
               {/* Quick Intent Filter Chips */}
@@ -209,11 +207,10 @@ export default function ActivitySwapModal({
                       key={preset.id}
                       type='button'
                       onClick={() => setActiveIntent(preset.id)}
-                      className={`text-xs font-mono px-3 py-1.5 rounded-full flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-primary/20 border border-primary text-primary font-bold gold-glow'
-                          : 'glass border border-white/10 text-gray-400 hover:text-white hover:border-white/20'
-                      }`}
+                      className={`text-xs font-mono px-3 py-1.5 rounded-full flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${isSelected
+                        ? 'bg-primary/20 border border-primary text-primary font-bold gold-glow'
+                        : 'glass border border-white/10 text-gray-400 hover:text-white hover:border-white/20'
+                        }`}
                     >
                       <Icon className='w-3 h-3' />
                       <span>{preset.label}</span>
@@ -287,19 +284,18 @@ export default function ActivitySwapModal({
                               ₹{altCost.toLocaleString()}
                             </div>
                             <div
-                              className={`text-[10px] font-mono font-semibold ${
-                                isSaving
-                                  ? 'text-emerald-400'
-                                  : isExact
+                              className={`text-[10px] font-mono font-semibold ${isSaving
+                                ? 'text-emerald-400'
+                                : isExact
                                   ? 'text-gray-400'
                                   : 'text-amber-400'
-                              }`}
+                                }`}
                             >
                               {isSaving
                                 ? `Save ₹${Math.abs(delta).toLocaleString()}`
                                 : isExact
-                                ? 'Same Cost'
-                                : `+₹${delta.toLocaleString()}`}
+                                  ? 'Same Cost'
+                                  : `+₹${delta.toLocaleString()}`}
                             </div>
                           </div>
 

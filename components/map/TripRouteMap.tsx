@@ -223,7 +223,7 @@ export default function TripRouteMap({
 
   return (
     <div className='relative w-full h-[480px] lg:h-[580px] rounded-3xl overflow-hidden border border-primary/30 glass-strong shadow-2xl gold-glow group'>
-      
+
       {/* Top Floating Badge & Legend */}
       <div className='absolute top-4 left-4 z-[1000] flex items-center gap-2 pointer-events-none'>
         <div className='glass-dark px-3 py-1.5 rounded-full border border-primary/30 text-primary font-mono text-xs font-bold flex items-center gap-1.5 shadow-md'>

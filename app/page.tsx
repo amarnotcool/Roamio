@@ -79,9 +79,9 @@ export default function HomePage() {
     <div className='flex flex-col min-h-screen bg-[#0D1119] text-[#f5f5f5] overflow-x-hidden selection:bg-[#D97742]/30 selection:text-white'>
       
       {/* ==================================================================== */}
-      {/* 100% VW IMMERSIVE HERO SECTION (Warm Sunset Pagoda & Editorial Type) */}
+      {/* 100% VW IMMERSIVE HERO SECTION (Edge-to-Edge Warm Sunset & Editorial Type) */}
       {/* ==================================================================== */}
-      <section className='relative w-full min-h-[640px] sm:min-h-[720px] lg:min-h-[760px] flex flex-col justify-between overflow-hidden'>
+      <section className='relative w-full min-h-[720px] sm:min-h-[800px] lg:min-h-[860px] flex flex-col justify-between overflow-hidden'>
         
         {/* Full-bleed Background Photograph: Kyoto Pagoda at Sunset */}
         <Image
@@ -111,25 +111,25 @@ export default function HomePage() {
           }}
         />
 
-        {/* Top Floating Navigation Bar (Full bleed 100vw container, max-w-7xl content) */}
-        <header className='w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 pt-6 sm:pt-8 flex items-center justify-between relative z-30'>
+        {/* Top Floating Navigation Bar (Full width edge-to-edge) */}
+        <header className='w-full px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 pt-6 sm:pt-8 flex items-center justify-between relative z-30'>
           
-          {/* Brand Wordmark - Clean Editorial Serif */}
+          {/* Brand Wordmark - Prominent Editorial Serif */}
           <Link href='/' className='flex items-center gap-1 group'>
-            <span className='font-serif text-2xl sm:text-3xl font-normal tracking-tight text-[#1C1917] hover:opacity-85 transition-opacity'>
+            <span className='font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-medium tracking-tight text-[#1C1917] hover:opacity-85 transition-opacity'>
               Roamio
             </span>
           </Link>
 
-          {/* Centered Translucent Frosted Pill Navigation */}
-          <nav className='hidden md:flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 shadow-sm'>
+          {/* Centered Translucent Frosted Pill Navigation - Larger & More Legible */}
+          <nav className='hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/45 backdrop-blur-md border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)]'>
             <button
               type='button'
               onClick={() => setActiveNav('features')}
-              className={`text-xs font-medium px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] font-semibold px-5 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'features'
-                  ? 'bg-white text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-sm'
+                  : 'text-[#3D352E] hover:text-[#1C1917]'
               }`}
             >
               Features
@@ -140,10 +140,10 @@ export default function HomePage() {
                 setActiveNav('navigation')
                 document.getElementById('destinations')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'navigation'
-                  ? 'bg-white text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-sm'
+                  : 'text-[#3D352E] hover:text-[#1C1917]'
               }`}
             >
               Navigation
@@ -154,10 +154,10 @@ export default function HomePage() {
                 setActiveNav('prices')
                 document.getElementById('scenarios')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'prices'
-                  ? 'bg-white text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-sm'
+                  : 'text-[#3D352E] hover:text-[#1C1917]'
               }`}
             >
               Prices
@@ -168,10 +168,10 @@ export default function HomePage() {
                 setActiveNav('stories')
                 router.push('/trips')
               }}
-              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'stories'
-                  ? 'bg-white text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-sm'
+                  : 'text-[#3D352E] hover:text-[#1C1917]'
               }`}
             >
               Stories
@@ -179,17 +179,17 @@ export default function HomePage() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className='flex items-center gap-3 sm:gap-4'>
+          <div className='flex items-center gap-3 sm:gap-5'>
             <Link
               href='/login'
-              className='text-xs font-medium text-[#1C1917] hover:opacity-75 transition-opacity px-2'
+              className='text-sm sm:text-[15px] font-medium text-[#1C1917] hover:opacity-75 transition-opacity px-3 py-2'
             >
               Log in
             </Link>
 
             <Link
               href='/new'
-              className='bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white text-xs font-medium px-4 sm:px-5 py-2 rounded-full shadow-[0_4px_16px_rgba(217,119,66,0.35)] hover:shadow-[0_6px_20px_rgba(217,119,66,0.45)] transition-all cursor-pointer'
+              className='bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white text-sm sm:text-[15px] font-semibold px-6 py-2.5 rounded-full shadow-[0_4px_18px_rgba(217,119,66,0.4)] hover:shadow-[0_6px_24px_rgba(217,119,66,0.5)] transition-all cursor-pointer'
             >
               Sign Up
             </Link>
@@ -197,12 +197,12 @@ export default function HomePage() {
 
         </header>
 
-        {/* Left-Aligned Editorial Headline & Subtitle */}
-        <div className='w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 relative z-20 my-auto py-12 sm:py-16'>
-          <div className='max-w-2xl space-y-2'>
+        {/* Left-Aligned Editorial Headline & Subtitle (Full Edge-to-Edge Width) */}
+        <div className='w-full px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 relative z-20 my-auto py-12 sm:py-16 lg:py-20'>
+          <div className='max-w-3xl space-y-3'>
             
-            {/* Headline matching reference image exactly */}
-            <h1 className='font-serif text-4xl sm:text-5xl lg:text-[4.2rem] font-normal tracking-tight text-[#1C1917] leading-[1.12]'>
+            {/* Headline matching reference image, edge-anchored & commanding */}
+            <h1 className='font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem] font-normal tracking-tight text-[#1C1917] leading-[1.08]'>
               <span className='block sm:whitespace-nowrap'>Every journey has a story.</span>
               <span className='block font-normal mt-1 sm:whitespace-nowrap'>
                 Let&apos;s write yours.
@@ -210,7 +210,7 @@ export default function HomePage() {
             </h1>
 
             {/* Subtitle */}
-            <p className='text-xs sm:text-sm text-[#4A3F35] font-sans max-w-md leading-relaxed pt-2 pb-6'>
+            <p className='text-sm sm:text-base md:text-lg text-[#3D352E] font-sans max-w-xl leading-relaxed pt-2 pb-6 font-normal'>
               Every journey has a story, crafted with care inside detailed editorial collection.
             </p>
 
@@ -218,10 +218,10 @@ export default function HomePage() {
             <div>
               <Link
                 href='/new'
-                className='bg-gradient-to-r from-[#D97742]/85 to-[#C25E2E]/85 hover:from-[#D97742] hover:to-[#C25E2E] text-white font-medium text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-[0_8px_24px_rgba(217,119,66,0.35)] border border-white/25 backdrop-blur-md transition-all cursor-pointer inline-flex items-center gap-2'
+                className='bg-gradient-to-r from-[#D97742]/90 to-[#C25E2E]/90 hover:from-[#D97742] hover:to-[#C25E2E] text-white font-semibold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-[0_8px_28px_rgba(217,119,66,0.45)] border border-white/30 backdrop-blur-md transition-all cursor-pointer inline-flex items-center gap-2.5'
               >
                 <span>Start Planning</span>
-                <ArrowRight className='w-3.5 h-3.5 opacity-90' />
+                <ArrowRight className='w-4 h-4 opacity-90' />
               </Link>
             </div>
 
@@ -239,7 +239,7 @@ export default function HomePage() {
 
       {/* FEATURED DESTINATIONS */}
       <section id='destinations' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0D1119] via-[#10141d] to-[#0D1119]'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 relative z-10'>
+        <div className='w-full max-w-[1500px] mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 relative z-10'>
           
           {/* Section Header */}
           <div className='text-center mb-16'>
@@ -313,7 +313,7 @@ export default function HomePage() {
         {/* Ambient Sunset Glow Orbs */}
         <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#D97742]/10 rounded-full blur-3xl pointer-events-none' />
 
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 relative z-10'>
+        <div className='w-full max-w-[1500px] mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 relative z-10'>
           <div className='grid gap-12 lg:grid-cols-2 lg:gap-20 items-center'>
             
             {/* Left Content */}
@@ -462,7 +462,7 @@ export default function HomePage() {
 
       {/* BUDGET COMPASS SECTION */}
       <section id='budget' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0D1119] via-[#10141d] to-[#0D1119] border-t border-white/[0.08]'>
-        <div className='max-w-6xl mx-auto px-4 sm:px-6'>
+        <div className='w-full max-w-[1500px] mx-auto px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20'>
           
           <div className='bg-[#151B26]/85 backdrop-blur-xl rounded-3xl p-8 sm:p-12 border border-[#D97742]/20 shadow-[0_16px_48px_rgba(0,0,0,0.5)] space-y-8'>
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
