@@ -423,10 +423,10 @@ export default function TripDetailPage() {
 
   return (
     <div className='max-w-7xl mx-auto space-y-8 pb-20'>
-      
+
       {/* Luxury Travel Dossier Card */}
       <div className='rounded-3xl border border-primary/30 glass-strong overflow-hidden gold-glow'>
-        
+
         {/* Ticket Header Ribbon */}
         <div className='bg-primary/15 px-6 sm:px-8 py-4 border-b border-primary/20 flex flex-wrap items-center justify-between gap-3'>
           <div className='flex items-center gap-2 font-mono text-xs text-primary font-bold'>
@@ -444,7 +444,7 @@ export default function TripDetailPage() {
             <button
               onClick={() => {
                 if (navigator.share) {
-                  navigator.share({ title: trip.title, url: window.location.href }).catch(() => {})
+                  navigator.share({ title: trip.title, url: window.location.href }).catch(() => { })
                 } else {
                   navigator.clipboard.writeText(window.location.href)
                   alert('Trip link copied to clipboard!')
@@ -530,7 +530,7 @@ export default function TripDetailPage() {
 
       {/* Main Split Layout: Timeline on Left, Sticky Interactive Route Map on Right */}
       <div className='space-y-6'>
-        
+
         {/* Header and Day Tabs */}
         <div className='flex flex-wrap items-center justify-between gap-4'>
           <div>
@@ -547,7 +547,7 @@ export default function TripDetailPage() {
         </div>
 
         <Tabs value={activeDayTab} onValueChange={setActiveDayTab} className='space-y-6'>
-          
+
           <TabsList className='glass-dark p-1 rounded-2xl flex flex-wrap h-auto gap-1 border border-white/10'>
             {itinerary.map((day) => (
               <TabsTrigger
@@ -562,12 +562,12 @@ export default function TripDetailPage() {
 
           {/* Responsive Split View: Cards (Left 7 cols) & Sticky Map (Right 5 cols) */}
           <div className='grid lg:grid-cols-12 gap-8 items-start'>
-            
+
             {/* LEFT COLUMN: Activity Cards */}
             <div className='lg:col-span-7 space-y-6'>
               {itinerary.map((day) => (
                 <TabsContent key={day.dayNumber} value={day.dayNumber.toString()} className='space-y-6 mt-0'>
-                  
+
                   {/* Day Header Box */}
                   <div className='p-6 rounded-2xl glass-dark border border-white/10 flex flex-wrap items-center justify-between gap-4'>
                     <div className='flex items-center gap-3'>
@@ -616,9 +616,8 @@ export default function TripDetailPage() {
                           {/* Visual Connector Dot */}
                           <div className='flex flex-col items-center w-6 pt-6'>
                             <div
-                              className={`w-3.5 h-3.5 rounded-full ring-4 ring-[#0a0a0a] z-10 transition-all ${
-                                isSelected ? 'bg-[#ffd700] scale-125 gold-glow-strong' : 'bg-primary gold-glow'
-                              }`}
+                              className={`w-3.5 h-3.5 rounded-full ring-4 ring-[#0a0a0a] z-10 transition-all ${isSelected ? 'bg-[#ffd700] scale-125 gold-glow-strong' : 'bg-primary gold-glow'
+                                }`}
                             />
                             {index < day.activities.length - 1 && (
                               <div className='w-0.5 flex-1 bg-primary/20' />
@@ -628,11 +627,10 @@ export default function TripDetailPage() {
                           {/* Postcard Activity Card */}
                           <div
                             onClick={() => setSelectedActivityId(activity.placeId)}
-                            className={`flex-1 rounded-2xl border p-6 shadow-md transition-all space-y-4 cursor-pointer ${
-                              isSelected
-                                ? 'border-primary bg-primary/10 ring-2 ring-primary/50 gold-glow'
-                                : 'border-white/10 glass-strong hover:border-primary/40'
-                            }`}
+                            className={`flex-1 rounded-2xl border p-6 shadow-md transition-all space-y-4 cursor-pointer ${isSelected
+                              ? 'border-primary bg-primary/10 ring-2 ring-primary/50 gold-glow'
+                              : 'border-white/10 glass-strong hover:border-primary/40'
+                              }`}
                           >
                             <div className='flex flex-wrap items-center justify-between gap-2'>
                               <div className='flex items-center gap-2'>
@@ -672,7 +670,7 @@ export default function TripDetailPage() {
                               <span className='text-white font-bold'>
                                 Est. Cost: ₹{activity.costEstimateINR?.toLocaleString() || 'Free'}
                               </span>
-                              
+
                               <div className='flex flex-wrap items-center gap-2'>
                                 {/* Swap Stop Trigger Button */}
                                 <button

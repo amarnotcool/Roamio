@@ -151,7 +151,7 @@ function TripStudioContent() {
     1,
     Math.ceil(
       (new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) /
-        (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
     ) + 1
   )
 
@@ -277,7 +277,7 @@ function TripStudioContent() {
         try {
           const stored = JSON.parse(localStorage.getItem('roamio_guest_trips') || '[]')
           localStorage.setItem('roamio_guest_trips', JSON.stringify([guestTrip, ...stored.filter((t: any) => t.id !== tripId)]))
-        } catch {}
+        } catch { }
       }
 
       router.push(`/trips/${tripId}`)
@@ -289,7 +289,7 @@ function TripStudioContent() {
 
   return (
     <div className='max-w-4xl mx-auto space-y-8 pb-16'>
-      
+
       {/* Step Header & Progress */}
       <div className='space-y-4'>
         <div className='flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4'>
@@ -319,11 +319,10 @@ function TripStudioContent() {
             <div
               key={s.num}
               onClick={() => s.num < step && setStep(s.num)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                s.num <= step
-                  ? 'bg-primary gold-glow'
-                  : 'bg-white/10'
-              } ${s.num < step ? 'cursor-pointer hover:opacity-80' : ''}`}
+              className={`h-2 rounded-full transition-all duration-300 ${s.num <= step
+                ? 'bg-primary gold-glow'
+                : 'bg-white/10'
+                } ${s.num < step ? 'cursor-pointer hover:opacity-80' : ''}`}
             />
           ))}
         </div>
@@ -378,11 +377,10 @@ function TripStudioContent() {
                   <div
                     key={d.name}
                     onClick={() => handleDestinationSelect(d.name, d.typicalBudget)}
-                    className={`group relative rounded-2xl overflow-hidden border p-3 cursor-pointer transition-all duration-300 glass-dark ${
-                      isSelected
-                        ? 'border-primary ring-2 ring-primary/30 gold-glow scale-[1.02]'
-                        : 'border-white/10 hover:border-primary/40'
-                    }`}
+                    className={`group relative rounded-2xl overflow-hidden border p-3 cursor-pointer transition-all duration-300 glass-dark ${isSelected
+                      ? 'border-primary ring-2 ring-primary/30 gold-glow scale-[1.02]'
+                      : 'border-white/10 hover:border-primary/40'
+                      }`}
                   >
                     <div className='aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-black relative'>
                       <img
@@ -444,11 +442,10 @@ function TripStudioContent() {
                   key={dp.days}
                   type='button'
                   onClick={() => applyDurationPreset(dp.days)}
-                  className={`text-xs font-mono px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    tripDays === dp.days
-                      ? 'bg-primary text-black font-bold border-primary shadow-sm gold-glow'
-                      : 'glass border-white/10 text-gray-300 hover:border-primary/40'
-                  }`}
+                  className={`text-xs font-mono px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${tripDays === dp.days
+                    ? 'bg-primary text-black font-bold border-primary shadow-sm gold-glow'
+                    : 'glass border-white/10 text-gray-300 hover:border-primary/40'
+                    }`}
                 >
                   {dp.label} ({dp.days}D)
                 </button>
@@ -490,11 +487,10 @@ function TripStudioContent() {
                   <div
                     key={p.id}
                     onClick={() => handlePartyTypeSelect(p.id)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-primary bg-primary/10 gold-glow'
-                        : 'border-white/10 glass-dark hover:border-white/20'
-                    }`}
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${isSelected
+                      ? 'border-primary bg-primary/10 gold-glow'
+                      : 'border-white/10 glass-dark hover:border-white/20'
+                      }`}
                   >
                     <div className='flex items-center justify-between'>
                       <div className='font-serif font-bold text-base text-white'>
@@ -614,11 +610,10 @@ function TripStudioContent() {
                     key={amt}
                     type='button'
                     onClick={() => setFormData((prev) => ({ ...prev, budgetINR: amt }))}
-                    className={`px-4 py-2 rounded-xl text-xs font-mono font-medium transition-all cursor-pointer ${
-                      formData.budgetINR === amt
-                        ? 'bg-primary text-black font-bold shadow-md gold-glow'
-                        : 'glass border border-white/15 text-gray-300 hover:border-primary/50'
-                    }`}
+                    className={`px-4 py-2 rounded-xl text-xs font-mono font-medium transition-all cursor-pointer ${formData.budgetINR === amt
+                      ? 'bg-primary text-black font-bold shadow-md gold-glow'
+                      : 'glass border border-white/15 text-gray-300 hover:border-primary/50'
+                      }`}
                   >
                     ₹{(amt / 1000).toFixed(0)}k
                   </button>
@@ -652,11 +647,10 @@ function TripStudioContent() {
                   <div
                     key={p.value}
                     onClick={() => setFormData((prev) => ({ ...prev, pace: p.value as any }))}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-primary bg-primary/10 gold-glow'
-                        : 'border-white/10 glass-dark hover:border-white/20'
-                    }`}
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${isSelected
+                      ? 'border-primary bg-primary/10 gold-glow'
+                      : 'border-white/10 glass-dark hover:border-white/20'
+                      }`}
                   >
                     <div className='flex items-center justify-between'>
                       <div className='font-serif font-bold text-base text-white'>
@@ -712,11 +706,10 @@ function TripStudioContent() {
                     key={opt.id}
                     type='button'
                     onClick={() => toggleInterest(opt.id)}
-                    className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                      isSelected
-                        ? 'border-primary bg-primary/15 text-white gold-glow'
-                        : 'border-white/10 glass-dark text-gray-300 hover:border-primary/40'
-                    }`}
+                    className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${isSelected
+                      ? 'border-primary bg-primary/15 text-white gold-glow'
+                      : 'border-white/10 glass-dark text-gray-300 hover:border-primary/40'
+                      }`}
                   >
                     <span className='text-xl'>{opt.icon}</span>
                     <span className='text-xs font-medium'>{opt.label}</span>

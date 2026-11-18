@@ -132,23 +132,22 @@ export default function HomePage() {
         {/* Top Floating Navigation Bar (Full bleed 100vw container, max-w-7xl content) */}
         <header className='w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 pt-6 sm:pt-8 flex items-center justify-between relative z-30'>
           
-          {/* Brand Wordmark */}
-          <Link href='/' className='flex items-center gap-1.5 group'>
-            <span className='font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[#1C1917]'>
+          {/* Brand Wordmark - Clean Editorial Serif */}
+          <Link href='/' className='flex items-center gap-1 group'>
+            <span className='font-serif text-2xl sm:text-3xl font-normal tracking-tight text-[#1C1917] hover:opacity-85 transition-opacity'>
               Roamio
             </span>
-            <span className='w-1.5 h-1.5 rounded-full bg-[#D97742] mb-1' />
           </Link>
 
-          {/* Centered Translucent Pill Navigation */}
-          <nav className='hidden md:flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/35 backdrop-blur-md border border-white/40 shadow-sm'>
+          {/* Centered Translucent Frosted Pill Navigation */}
+          <nav className='hidden md:flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 shadow-sm'>
             <button
               type='button'
               onClick={() => setActiveNav('features')}
-              className={`text-xs font-semibold px-3.5 py-1 rounded-full transition-all cursor-pointer ${
+              className={`text-xs font-medium px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                 activeNav === 'features'
-                  ? 'bg-white/95 text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-xs'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
               }`}
             >
               Features
@@ -159,10 +158,10 @@ export default function HomePage() {
                 setActiveNav('navigation')
                 document.getElementById('destinations')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-xs font-semibold px-3.5 py-1 rounded-full transition-all cursor-pointer ${
+              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
                 activeNav === 'navigation'
-                  ? 'bg-white/95 text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-xs'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
               }`}
             >
               Navigation
@@ -173,10 +172,10 @@ export default function HomePage() {
                 setActiveNav('prices')
                 document.getElementById('scenarios')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-xs font-semibold px-3.5 py-1 rounded-full transition-all cursor-pointer ${
+              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
                 activeNav === 'prices'
-                  ? 'bg-white/95 text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-xs'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
               }`}
             >
               Prices
@@ -187,10 +186,10 @@ export default function HomePage() {
                 setActiveNav('stories')
                 router.push('/trips')
               }}
-              className={`text-xs font-semibold px-3.5 py-1 rounded-full transition-all cursor-pointer ${
+              className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
                 activeNav === 'stories'
-                  ? 'bg-white/95 text-[#1C1917] shadow-xs'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'bg-white text-[#1C1917] shadow-xs'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917]'
               }`}
             >
               Stories
@@ -201,14 +200,14 @@ export default function HomePage() {
           <div className='flex items-center gap-3 sm:gap-4'>
             <Link
               href='/login'
-              className='text-xs font-semibold text-[#1C1917] hover:opacity-75 transition-opacity px-2'
+              className='text-xs font-medium text-[#1C1917] hover:opacity-75 transition-opacity px-2'
             >
               Log in
             </Link>
 
             <Link
               href='/new'
-              className='bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white text-xs font-semibold px-4 sm:px-5 py-2 rounded-full shadow-md transition-all cursor-pointer'
+              className='bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white text-xs font-medium px-4 sm:px-5 py-2 rounded-full shadow-[0_4px_16px_rgba(217,119,66,0.35)] hover:shadow-[0_6px_20px_rgba(217,119,66,0.45)] transition-all cursor-pointer'
             >
               Sign Up
             </Link>
@@ -221,25 +220,26 @@ export default function HomePage() {
           <div className='max-w-2xl space-y-2'>
             
             {/* Headline matching reference image exactly */}
-            <h1 className='font-serif text-4xl sm:text-5xl lg:text-[4rem] font-normal tracking-tight text-[#1C1917] leading-[1.14]'>
+            <h1 className='font-serif text-4xl sm:text-5xl lg:text-[4.2rem] font-normal tracking-tight text-[#1C1917] leading-[1.12]'>
               <span className='block sm:whitespace-nowrap'>Every journey has a story.</span>
-              <span className='block font-normal mt-0.5 sm:whitespace-nowrap'>
+              <span className='block font-normal mt-1 sm:whitespace-nowrap'>
                 Let&apos;s write yours.
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className='text-xs sm:text-sm text-[#4A3F35] font-sans max-w-md leading-relaxed pt-2 pb-5'>
+            <p className='text-xs sm:text-sm text-[#4A3F35] font-sans max-w-md leading-relaxed pt-2 pb-6'>
               Every journey has a story, crafted with care inside detailed editorial collection.
             </p>
 
-            {/* Frosted Terracotta CTA Button */}
+            {/* Frosted Sunset Terracotta CTA Button */}
             <div>
               <Link
                 href='/new'
-                className='bg-gradient-to-r from-[#D97742]/90 to-[#C25E2E]/90 hover:from-[#E2834E] hover:to-[#CF6938] text-white font-medium text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-lg border border-white/20 transition-all cursor-pointer inline-flex items-center gap-2 backdrop-blur-xs'
+                className='bg-gradient-to-r from-[#D97742]/85 to-[#C25E2E]/85 hover:from-[#D97742] hover:to-[#C25E2E] text-white font-medium text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-[0_8px_24px_rgba(217,119,66,0.35)] border border-white/25 backdrop-blur-md transition-all cursor-pointer inline-flex items-center gap-2'
               >
-                <span>Landing Page</span>
+                <span>Start Planning</span>
+                <ArrowRight className='w-3.5 h-3.5 opacity-90' />
               </Link>
             </div>
 
@@ -247,27 +247,27 @@ export default function HomePage() {
         </div>
 
         {/* Carousel Slider Indicator Dots (Bottom Center) */}
-        <div className='w-full pb-8 z-20 flex items-center justify-center gap-1.5 pointer-events-none'>
+        <div className='w-full pb-8 z-20 flex items-center justify-center gap-2 pointer-events-none'>
           <span className='w-1.5 h-1.5 rounded-full bg-white/40' />
-          <span className='w-5 h-1.5 rounded-full bg-white/90 shadow-xs' />
+          <span className='w-6 h-1 rounded-full bg-white/90 shadow-xs' />
           <span className='w-1.5 h-1.5 rounded-full bg-white/40' />
         </div>
 
       </section>
 
       {/* FEATURED DESTINATIONS */}
-      <section id='destinations' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] via-[#121212] to-[#0a0a0a]'>
+      <section id='destinations' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] via-[#10141d] to-[#0D1119]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 relative z-10'>
           
           {/* Section Header */}
           <div className='text-center mb-16'>
-            <div className='inline-flex items-center gap-1.5 mb-4 py-1.5 px-4 glass border border-primary/30 text-primary font-mono text-xs rounded-full'>
+            <div className='inline-flex items-center gap-1.5 mb-4 py-1.5 px-4 rounded-full bg-[#D97742]/10 border border-[#D97742]/25 text-[#E5A882] font-mono text-xs'>
               ✦ Handpicked Domestic Retreats
             </div>
-            <h2 className='text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 font-serif'>
-              Featured <span className='text-gold-shine'>Locations</span>
+            <h2 className='text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight mb-4 font-serif text-white'>
+              Featured <span className='bg-gradient-to-r from-[#F5DEC3] via-[#E5A882] to-[#D97742] bg-clip-text text-transparent'>Locations</span>
             </h2>
-            <p className='text-lg text-gray-400 max-w-xl mx-auto'>
+            <p className='text-base sm:text-lg text-stone-400 max-w-xl mx-auto font-sans'>
               Grounded, verified journeys curated for Indian domestic travelers
             </p>
           </div>
@@ -277,7 +277,7 @@ export default function HomePage() {
             {featuredLocations.map((location, index) => (
               <div
                 key={index}
-                className='group relative h-[520px] rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2'
+                className='group relative h-[520px] rounded-3xl overflow-hidden cursor-pointer border border-white/[0.08] hover:border-[#D97742]/40 transition-all duration-500 hover:-translate-y-2 shadow-xl'
               >
                 {/* Background Image */}
                 <Image
@@ -285,34 +285,34 @@ export default function HomePage() {
                   alt={location.name}
                   fill
                   sizes='(max-width: 768px) 100vw, 33vw'
-                  className='object-cover transition-transform duration-700 group-hover:scale-110'
+                  className='object-cover transition-transform duration-700 group-hover:scale-105'
                 />
 
                 {/* Dark Gradient Overlay */}
-                <div className='absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent' />
+                <div className='absolute inset-0 bg-gradient-to-t from-[#0D1119] via-[#0D1119]/50 to-transparent' />
 
                 {/* Glassmorphic Floating Card */}
-                <div className='absolute inset-x-4 bottom-4 glass-strong rounded-2xl p-6 border border-white/10 transition-all duration-500 group-hover:border-primary/50 group-hover:gold-glow'>
+                <div className='absolute inset-x-4 bottom-4 bg-[#151B26]/85 backdrop-blur-xl rounded-2xl p-6 border border-white/[0.08] transition-all duration-500 group-hover:border-[#D97742]/30 shadow-2xl'>
                   <div className='flex items-center justify-between mb-2'>
-                    <p className='text-primary text-xs font-mono font-bold uppercase tracking-wider'>
+                    <p className='text-[#E5A882] text-xs font-mono font-medium uppercase tracking-wider'>
                       {location.region}
                     </p>
-                    <span className='text-xs font-mono text-gray-300 bg-white/10 px-2.5 py-0.5 rounded-full'>
+                    <span className='text-xs font-mono text-stone-300 bg-white/10 px-2.5 py-0.5 rounded-full'>
                       {location.budget}
                     </span>
                   </div>
 
-                  <h3 className='text-2xl font-bold text-white mb-2 font-serif'>
+                  <h3 className='text-2xl font-normal text-white mb-2 font-serif'>
                     {location.name}
                   </h3>
 
-                  <p className='text-gray-300 text-xs sm:text-sm leading-relaxed mb-6 line-clamp-2'>
+                  <p className='text-stone-300 text-xs sm:text-sm leading-relaxed mb-6 line-clamp-2'>
                     {location.description}
                   </p>
 
                   <Link
                     href={`/new?dest=${encodeURIComponent(location.name)}`}
-                    className='w-full py-3 px-6 rounded-full glass border border-primary/50 text-primary text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary hover:text-black transition-all duration-300'
+                    className='w-full py-3 px-6 rounded-full bg-white/[0.04] border border-[#D97742]/35 text-[#F5DEC3] hover:bg-gradient-to-r hover:from-[#D97742] hover:to-[#C25E2E] hover:text-white hover:border-transparent transition-all duration-300 font-medium text-sm flex items-center justify-center gap-2 shadow-xs group-hover:shadow-[0_4px_16px_rgba(217,119,66,0.3)]'
                   >
                     <span>Plan This Trip</span>
                     <ArrowRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
@@ -326,26 +326,26 @@ export default function HomePage() {
       </section>
 
       {/* AI TRAVEL CONCIERGE HIGHLIGHT */}
-      <section id='concierge' className='py-32 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] via-[#141414] to-[#0a0a0a]'>
+      <section id='concierge' className='py-32 relative overflow-hidden bg-[#0D1119]'>
         
-        {/* Ambient Gold Glow Orbs */}
-        <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
+        {/* Ambient Sunset Glow Orbs */}
+        <div className='absolute top-1/4 right-1/4 w-96 h-96 bg-[#D97742]/10 rounded-full blur-3xl pointer-events-none' />
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 relative z-10'>
           <div className='grid gap-12 lg:grid-cols-2 lg:gap-20 items-center'>
             
             {/* Left Content */}
             <div>
-              <div className='inline-flex items-center gap-1.5 mb-6 py-2 px-4 glass border border-primary/30 text-primary font-mono text-xs rounded-full'>
-                <Sparkles className='mr-2 h-3.5 w-3.5' /> Grounded AI Intelligence
+              <div className='inline-flex items-center gap-1.5 mb-6 py-2 px-4 rounded-full bg-[#D97742]/10 border border-[#D97742]/25 text-[#E5A882] font-mono text-xs'>
+                <Sparkles className='mr-2 h-3.5 w-3.5 text-[#D97742]' /> Grounded AI Intelligence
               </div>
 
-              <h2 className='text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white font-serif'>
+              <h2 className='text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight mb-6 text-white font-serif'>
                 Your Personal <br />
-                <span className='text-gold-shine'>Travel Concierge</span>
+                <span className='bg-gradient-to-r from-[#F5DEC3] via-[#E5A882] to-[#D97742] bg-clip-text text-transparent'>Travel Concierge</span>
               </h2>
 
-              <p className='text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed font-sans'>
+              <p className='text-base sm:text-lg text-stone-300 mb-8 leading-relaxed font-sans'>
                 Tell Roamio where you want to go. Our engine verifies opening hours against Google Places, calculates realistic transit, and generates verified day plans — in seconds.
               </p>
 
@@ -358,17 +358,17 @@ export default function HomePage() {
                   'Offline-ready PWA: accessible without network on the road',
                 ].map((item, i) => (
                   <li key={i} className='flex items-start gap-3'>
-                    <div className='h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5'>
-                      <CheckCircle2 className='h-3.5 w-3.5 text-primary' strokeWidth={3} />
+                    <div className='h-6 w-6 rounded-full bg-[#D97742]/20 flex items-center justify-center shrink-0 mt-0.5'>
+                      <CheckCircle2 className='h-3.5 w-3.5 text-[#D97742]' strokeWidth={3} />
                     </div>
-                    <span className='text-gray-200 font-medium text-sm sm:text-base'>{item}</span>
+                    <span className='text-stone-200 font-medium text-sm sm:text-base'>{item}</span>
                   </li>
                 ))}
               </ul>
 
               <Link
                 href={`/new?dest=${encodeURIComponent(activeDemo.destQuery)}`}
-                className='inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-black font-semibold text-base hover:bg-primary/90 transition-all duration-300 shadow-md gold-glow'
+                className='inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white font-medium text-base transition-all duration-300 shadow-[0_6px_24px_rgba(217,119,66,0.4)]'
               >
                 <span>Try AI Itinerary Studio</span>
                 <Bot className='w-5 h-5' />
@@ -377,17 +377,17 @@ export default function HomePage() {
 
             {/* Right Interactive Chat / Itinerary Simulation */}
             <div className='relative'>
-              <div className='relative glass-strong rounded-3xl p-6 sm:p-8 shadow-2xl border border-primary/25 gold-glow'>
+              <div className='relative bg-[#151B26]/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/[0.08]'>
                 
                 {/* Header */}
                 <div className='flex items-center justify-between mb-4 pb-4 border-b border-white/10'>
                   <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-xs'>
-                      <Bot className='h-5 w-5 text-black' />
+                    <div className='h-10 w-10 rounded-full bg-gradient-to-br from-[#D97742] to-[#C25E2E] flex items-center justify-center text-white shadow-xs'>
+                      <Bot className='h-5 w-5' />
                     </div>
                     <div>
-                      <p className='font-bold text-sm text-white'>Roamio Concierge</p>
-                      <p className='text-xs text-gray-400'>Google Places Grounded AI</p>
+                      <p className='font-medium text-sm text-white'>Roamio Concierge</p>
+                      <p className='text-xs text-stone-400'>Google Places Grounded AI</p>
                     </div>
                   </div>
                   <div className='flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[11px] text-emerald-400 font-mono'>
@@ -404,10 +404,10 @@ export default function HomePage() {
                         key={scenario.id}
                         type='button'
                         onClick={() => setActiveDemoIndex(sIdx)}
-                        className={`text-xs font-mono px-3 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                        className={`text-xs font-mono px-3.5 py-1.5 rounded-full transition-all cursor-pointer whitespace-nowrap ${
                           isActive
-                            ? 'bg-primary text-black font-bold shadow-md gold-glow'
-                            : 'glass border border-white/10 text-gray-300 hover:border-primary/50'
+                            ? 'bg-gradient-to-r from-[#D97742] to-[#C25E2E] text-white font-medium shadow-[0_2px_12px_rgba(217,119,66,0.35)]'
+                            : 'bg-white/[0.04] border border-white/10 text-stone-300 hover:border-[#D97742]/40 hover:text-white'
                         }`}
                       >
                         {scenario.label}
@@ -419,39 +419,39 @@ export default function HomePage() {
                 {/* Messages */}
                 <div className='space-y-4'>
                   <div className='flex gap-3'>
-                    <div className='h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0'>
-                      <Bot className='h-4 w-4 text-primary' />
+                    <div className='h-8 w-8 rounded-full bg-[#D97742]/20 flex items-center justify-center shrink-0'>
+                      <Bot className='h-4 w-4 text-[#D97742]' />
                     </div>
-                    <div className='glass-dark p-4 rounded-2xl rounded-tl-md max-w-[340px]'>
-                      <p className='text-xs sm:text-sm text-white'>
+                    <div className='bg-black/40 p-4 rounded-2xl rounded-tl-md max-w-[340px] border border-white/[0.06]'>
+                      <p className='text-xs sm:text-sm text-stone-200'>
                         Where is your domestic escape taking you? Tell me destination, dates, and budget. ✨
                       </p>
                     </div>
                   </div>
 
                   <div className='flex gap-3 flex-row-reverse'>
-                    <div className='h-8 w-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center shrink-0 text-white text-xs font-mono font-bold'>
+                    <div className='h-8 w-8 rounded-full bg-gradient-to-br from-stone-700 to-stone-800 flex items-center justify-center shrink-0 text-white text-xs font-mono font-bold'>
                       YOU
                     </div>
-                    <div className='bg-gradient-to-br from-primary to-accent p-4 rounded-2xl rounded-tr-md max-w-[340px] text-black font-medium text-xs sm:text-sm shadow-xs transition-all duration-300'>
+                    <div className='bg-gradient-to-br from-[#D97742] to-[#C25E2E] p-4 rounded-2xl rounded-tr-md max-w-[340px] text-white font-medium text-xs sm:text-sm shadow-md transition-all duration-300'>
                       {activeDemo.prompt}
                     </div>
                   </div>
 
                   <div className='flex gap-3'>
-                    <div className='h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0'>
-                      <Bot className='h-4 w-4 text-primary' />
+                    <div className='h-8 w-8 rounded-full bg-[#D97742]/20 flex items-center justify-center shrink-0'>
+                      <Bot className='h-4 w-4 text-[#D97742]' />
                     </div>
-                    <div className='glass-dark p-4 rounded-2xl rounded-tl-md flex-1 space-y-3'>
+                    <div className='bg-black/40 p-4 rounded-2xl rounded-tl-md flex-1 space-y-3 border border-white/[0.06]'>
                       <div className='flex items-center gap-2 text-xs font-semibold text-white'>
-                        <Sparkles className='h-4 w-4 text-primary animate-pulse' />
+                        <Sparkles className='h-4 w-4 text-[#D97742] animate-pulse' />
                         <span>Crafting verified day-by-day itinerary...</span>
                       </div>
-                      <div className='p-3 glass rounded-xl border border-primary/30 flex items-center justify-between text-xs font-mono'>
-                        <span className='text-gray-300'>{activeDemo.highlight}</span>
-                        <span className='text-primary font-bold'>{activeDemo.status}</span>
+                      <div className='p-3 bg-white/[0.04] rounded-xl border border-[#D97742]/30 flex items-center justify-between text-xs font-mono'>
+                        <span className='text-stone-300'>{activeDemo.highlight}</span>
+                        <span className='text-[#E5A882] font-medium'>{activeDemo.status}</span>
                       </div>
-                      <div className='p-3 glass rounded-xl border border-emerald-500/30 flex items-center justify-between text-xs font-mono bg-emerald-950/20'>
+                      <div className='p-3 rounded-xl border border-emerald-500/30 flex items-center justify-between text-xs font-mono bg-emerald-950/20'>
                         <span className='text-emerald-400'>Estimated Budget: {activeDemo.estBudget}</span>
                         <span className='text-emerald-300 font-bold'>{activeDemo.buffer}</span>
                       </div>
@@ -460,12 +460,12 @@ export default function HomePage() {
                 </div>
 
                 <div className='mt-5 pt-3 border-t border-white/10 flex items-center justify-between'>
-                  <span className='text-[11px] font-mono text-gray-400'>
+                  <span className='text-[11px] font-mono text-stone-400'>
                     Instant Plan for {activeDemo.destQuery}
                   </span>
                   <Link
                     href={`/new?dest=${encodeURIComponent(activeDemo.destQuery)}`}
-                    className='text-xs font-mono text-primary font-bold hover:underline flex items-center gap-1'
+                    className='text-xs font-mono text-[#E5A882] font-medium hover:text-[#F5DEC3] flex items-center gap-1 transition-colors'
                   >
                     Load in Studio →
                   </Link>
@@ -479,55 +479,55 @@ export default function HomePage() {
       </section>
 
       {/* BUDGET COMPASS SECTION */}
-      <section id='budget' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0a0a0a] via-[#121212] to-[#0a0a0a] border-t border-white/10'>
+      <section id='budget' className='py-28 relative overflow-hidden bg-gradient-to-b from-[#0D1119] via-[#10141d] to-[#0D1119] border-t border-white/[0.08]'>
         <div className='max-w-6xl mx-auto px-4 sm:px-6'>
           
-          <div className='glass-strong rounded-3xl p-8 sm:p-12 border border-primary/25 gold-glow space-y-8'>
+          <div className='bg-[#151B26]/85 backdrop-blur-xl rounded-3xl p-8 sm:p-12 border border-[#D97742]/20 shadow-[0_16px_48px_rgba(0,0,0,0.5)] space-y-8'>
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
               <div>
-                <span className='font-mono text-xs uppercase tracking-widest text-primary font-bold'>
+                <span className='font-mono text-xs uppercase tracking-widest text-[#E5A882] font-medium'>
                   Financial Precision
                 </span>
-                <h3 className='text-3xl sm:text-4xl font-serif font-bold text-white mt-1'>
-                  The Roamio <span className='text-gold-shine'>Budget Compass</span>
+                <h3 className='text-3xl sm:text-4xl font-serif font-normal text-white mt-1'>
+                  The Roamio <span className='bg-gradient-to-r from-[#F5DEC3] via-[#E5A882] to-[#D97742] bg-clip-text text-transparent'>Budget Compass</span>
                 </h3>
-                <p className='text-sm text-gray-400 mt-1 max-w-lg'>
+                <p className='text-sm text-stone-400 mt-1 max-w-lg font-sans'>
                   No surprise bills. Every trip plan tracks estimated stays, local travel, dining, and activities against your set INR target.
                 </p>
               </div>
               <div className='text-left md:text-right'>
-                <div className='text-xs font-mono text-gray-400'>Sample 4-Day Domestic Trip</div>
+                <div className='text-xs font-mono text-stone-400'>Sample 4-Day Domestic Trip</div>
                 <div className='text-2xl font-mono font-bold text-white'>
-                  ₹38,200 <span className='text-sm text-gray-500 font-normal'>/ ₹50,000 Target</span>
+                  ₹38,200 <span className='text-sm text-stone-500 font-normal'>/ ₹50,000 Target</span>
                 </div>
               </div>
             </div>
 
-            {/* Segmented Gold & Earth Bar */}
+            {/* Segmented Sunset & Earth Bar */}
             <div className='space-y-3'>
               <div className='h-4 w-full bg-white/10 rounded-full overflow-hidden flex p-0.5 gap-1'>
-                <div className='h-full rounded-l-full bg-primary' style={{ width: '45%' }} title='Heritage Stays: ₹17,000' />
-                <div className='h-full bg-accent' style={{ width: '22%' }} title='Sights & Entry: ₹8,400' />
-                <div className='h-full bg-[#E06D53]' style={{ width: '18%' }} title='Regional Dining: ₹6,800' />
-                <div className='h-full bg-[#415A77]' style={{ width: '10%' }} title='Transit & Cabs: ₹3,800' />
+                <div className='h-full rounded-l-full bg-[#D97742]' style={{ width: '45%' }} title='Heritage Stays: ₹17,000' />
+                <div className='h-full bg-[#E5A882]' style={{ width: '22%' }} title='Sights & Entry: ₹8,400' />
+                <div className='h-full bg-[#C25E2E]' style={{ width: '18%' }} title='Regional Dining: ₹6,800' />
+                <div className='h-full bg-[#6B5E55]' style={{ width: '10%' }} title='Transit & Cabs: ₹3,800' />
                 <div className='h-full rounded-r-full bg-emerald-600' style={{ width: '5%' }} title='Emergency Buffer: ₹2,200' />
               </div>
 
-              <div className='grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono pt-2 text-gray-300'>
+              <div className='grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono pt-2 text-stone-300'>
                 <div className='flex items-center gap-2'>
-                  <span className='w-2.5 h-2.5 rounded-full bg-primary' />
+                  <span className='w-2.5 h-2.5 rounded-full bg-[#D97742]' />
                   <span>Stays (45%)</span>
                 </div>
                 <div className='flex items-center gap-2'>
-                  <span className='w-2.5 h-2.5 rounded-full bg-accent' />
+                  <span className='w-2.5 h-2.5 rounded-full bg-[#E5A882]' />
                   <span>Sights (22%)</span>
                 </div>
                 <div className='flex items-center gap-2'>
-                  <span className='w-2.5 h-2.5 rounded-full bg-[#E06D53]' />
+                  <span className='w-2.5 h-2.5 rounded-full bg-[#C25E2E]' />
                   <span>Dining (18%)</span>
                 </div>
                 <div className='flex items-center gap-2'>
-                  <span className='w-2.5 h-2.5 rounded-full bg-[#415A77]' />
+                  <span className='w-2.5 h-2.5 rounded-full bg-[#6B5E55]' />
                   <span>Transit (10%)</span>
                 </div>
                 <div className='text-emerald-400 font-bold'>
@@ -541,18 +541,18 @@ export default function HomePage() {
       </section>
 
       {/* BOTTOM CTA */}
-      <section className='py-28 relative overflow-hidden bg-gradient-to-t from-black via-gray-950 to-black border-t border-white/10'>
+      <section className='py-28 relative overflow-hidden bg-gradient-to-t from-[#080B10] via-[#0D1119] to-[#080B10] border-t border-white/[0.08]'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 relative z-10'>
-          <h2 className='text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight font-serif text-white'>
-            Ready to Wander <span className='text-gold-shine'>Smarter?</span>
+          <h2 className='text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight font-serif text-white'>
+            Ready to Wander <span className='bg-gradient-to-r from-[#F5DEC3] via-[#E5A882] to-[#D97742] bg-clip-text text-transparent'>Smarter?</span>
           </h2>
-          <p className='text-base sm:text-lg text-gray-400 max-w-xl mx-auto'>
+          <p className='text-base sm:text-lg text-stone-400 max-w-xl mx-auto font-sans'>
             Free forever. Plan complete day-by-day itineraries with verified places and install directly on your phone as an offline PWA.
           </p>
           <div className='pt-4 flex justify-center'>
             <Link
               href='/new'
-              className='px-10 py-4 rounded-full bg-primary text-black font-semibold text-lg flex items-center gap-3 hover:bg-primary/90 transition-all duration-300 shadow-xl gold-glow-strong'
+              className='px-10 py-4 rounded-full bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white font-medium text-base sm:text-lg flex items-center gap-3 transition-all duration-300 shadow-[0_8px_32px_rgba(217,119,66,0.45)] cursor-pointer'
             >
               <span>Start Planning Free</span>
               <ArrowRight className='w-5 h-5' />
@@ -562,10 +562,10 @@ export default function HomePage() {
       </section>
 
       {/* LUXURY FOOTER */}
-      <footer className='py-12 border-t border-white/10 bg-black text-xs font-mono text-gray-500'>
+      <footer className='py-12 border-t border-white/[0.08] bg-[#080B10] text-xs font-mono text-stone-500'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4'>
           <div className='flex items-center gap-2'>
-            <span className='font-serif font-bold text-base text-gold-shine'>Roamio</span>
+            <span className='font-serif font-normal text-lg text-white'>Roamio</span>
             <span>—</span>
             <span>Wander Smarter, Not Harder · Indian Domestic Travel</span>
           </div>

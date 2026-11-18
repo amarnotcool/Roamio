@@ -8,14 +8,14 @@
   --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-mono: var(--font-space-mono), 'JetBrains Mono', 'Segoe UI Mono', monospace;
-  --color-primary: #d4a574;
-  --color-primary-foreground: #0a0a0a;
-  --color-accent: #ffd700;
-  --color-accent-foreground: #0a0a0a;
-  --color-border: rgba(255, 255, 255, 0.12);
-  --color-card: #141414;
+  --color-primary: #D97742;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #E5A882;
+  --color-accent-foreground: #0D1119;
+  --color-border: rgba(255, 248, 231, 0.08);
+  --color-card: #151B26;
   --color-card-foreground: #f5f5f5;
-  --color-muted: #1f1f1f;
+  --color-muted: #1A212E;
   --color-muted-foreground: #a0a0a0;
   --radius-lg: 1rem;
   --radius-md: 0.75rem;
@@ -23,46 +23,46 @@
 }
 
 :root {
-  --background: #0a0a0a;
+  --background: #0D1119;
   --foreground: #f5f5f5;
-  --card: #141414;
+  --card: #151B26;
   --card-foreground: #f5f5f5;
-  --popover: #141414;
+  --popover: #151B26;
   --popover-foreground: #f5f5f5;
-  --primary: #d4a574;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1f1f1f;
+  --primary: #D97742;
+  --primary-foreground: #ffffff;
+  --secondary: #1A212E;
   --secondary-foreground: #f5f5f5;
-  --muted: #1f1f1f;
+  --muted: #1A212E;
   --muted-foreground: #a0a0a0;
-  --accent: #ffd700;
-  --accent-foreground: #0a0a0a;
+  --accent: #E5A882;
+  --accent-foreground: #0D1119;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 248, 231, 0.08);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #d4a574;
+  --ring: #D97742;
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #0D1119;
   --foreground: #f5f5f5;
-  --card: #141414;
+  --card: #151B26;
   --card-foreground: #f5f5f5;
-  --popover: #141414;
+  --popover: #151B26;
   --popover-foreground: #f5f5f5;
-  --primary: #d4a574;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1f1f1f;
+  --primary: #D97742;
+  --primary-foreground: #ffffff;
+  --secondary: #1A212E;
   --secondary-foreground: #f5f5f5;
-  --muted: #1f1f1f;
+  --muted: #1A212E;
   --muted-foreground: #a0a0a0;
-  --accent: #ffd700;
-  --accent-foreground: #0a0a0a;
+  --accent: #E5A882;
+  --accent-foreground: #0D1119;
   --destructive: #ef4444;
-  --border: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 248, 231, 0.08);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #d4a574;
+  --ring: #D97742;
 }
 
 @layer base {
@@ -101,15 +101,15 @@
 }
 
 .gold-glow {
-  box-shadow: 0 0 25px rgba(212, 165, 116, 0.25);
+  box-shadow: 0 0 25px rgba(217, 119, 66, 0.28);
 }
 
 .gold-glow-strong {
-  box-shadow: 0 0 35px rgba(212, 165, 116, 0.45), 0 0 70px rgba(212, 165, 116, 0.15);
+  box-shadow: 0 0 35px rgba(217, 119, 66, 0.45), 0 0 70px rgba(217, 119, 66, 0.18);
 }
 
 .text-glow-gold {
-  text-shadow: 0 0 20px rgba(212, 165, 116, 0.6), 0 0 40px rgba(212, 165, 116, 0.3);
+  text-shadow: 0 0 20px rgba(217, 119, 66, 0.6), 0 0 40px rgba(217, 119, 66, 0.3);
 }
 
 .text-glow-white {
@@ -117,14 +117,14 @@
 }
 
 .text-gold {
-  background: linear-gradient(135deg, #d4a574 0%, #ffd700 100%);
+  background: linear-gradient(135deg, #F5DEC3 0%, #E5A882 50%, #D97742 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gold-shine {
-  background: linear-gradient(135deg, #d4a574 0%, #ffd700 50%, #ffeb3b 100%);
+  background: linear-gradient(135deg, #FBF8F3 0%, #F5DEC3 30%, #E5A882 70%, #D97742 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
