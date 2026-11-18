@@ -1,0 +1,189 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-mono: var(--font-space-mono), 'JetBrains Mono', 'Segoe UI Mono', monospace;
+  --color-primary: #d4a574;
+  --color-primary-foreground: #0a0a0a;
+  --color-accent: #ffd700;
+  --color-accent-foreground: #0a0a0a;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-card: #141414;
+  --color-card-foreground: #f5f5f5;
+  --color-muted: #1f1f1f;
+  --color-muted-foreground: #a0a0a0;
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+}
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --card: #141414;
+  --card-foreground: #f5f5f5;
+  --popover: #141414;
+  --popover-foreground: #f5f5f5;
+  --primary: #d4a574;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #f5f5f5;
+  --muted: #1f1f1f;
+  --muted-foreground: #a0a0a0;
+  --accent: #ffd700;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #d4a574;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --card: #141414;
+  --card-foreground: #f5f5f5;
+  --popover: #141414;
+  --popover-foreground: #f5f5f5;
+  --primary: #d4a574;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #f5f5f5;
+  --muted: #1f1f1f;
+  --muted-foreground: #a0a0a0;
+  --accent: #ffd700;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #d4a574;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: var(--ring);
+  }
+  body {
+    background: radial-gradient(circle at 50% 0%, #1c1c1c 0%, #0a0a0a 100%);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+}
+
+/* Glassmorphism & Luxury Glow Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-strong {
+  background: rgba(20, 20, 20, 0.75);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(212, 165, 116, 0.25);
+}
+
+.gold-glow-strong {
+  box-shadow: 0 0 35px rgba(212, 165, 116, 0.45), 0 0 70px rgba(212, 165, 116, 0.15);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 20px rgba(212, 165, 116, 0.6), 0 0 40px rgba(212, 165, 116, 0.3);
+}
+
+.text-glow-white {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+.text-gold {
+  background: linear-gradient(135deg, #d4a574 0%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gold-shine {
+  background: linear-gradient(135deg, #d4a574 0%, #ffd700 50%, #ffeb3b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Leaflet Dark Customizations */
+.roamio-dark-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+.roamio-dark-popup .leaflet-popup-tip {
+  background: #141414 !important;
+  border: 1px solid rgba(212, 165, 116, 0.4) !important;
+}
+.leaflet-container {
+  background: #0a0a0a !important;
+}
+
+/* Luxury Dark Mode Tile Filter for OpenStreetMap */
+.map-tiles-dark img,
+.map-tiles-dark.leaflet-tile {
+  filter: invert(100%) hue-rotate(180deg) brightness(80%) contrast(105%) grayscale(30%) !important;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  header, footer, nav, button:not(.print-preserve) {
+    display: none !important;
+  }
+  .glass, .glass-strong, .glass-dark {
+    background: #ffffff !important;
+    border: 1px solid #dddddd !important;
+    color: #111111 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  .text-gold-shine, .text-gold, .text-primary {
+    -webkit-text-fill-color: #8a6428 !important;
+    color: #8a6428 !important;
+  }
+  .gold-glow, .gold-glow-strong {
+    box-shadow: none !important;
+  }
+}
+
