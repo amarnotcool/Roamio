@@ -114,22 +114,52 @@ export default function HomePage() {
         {/* Top Floating Navigation Bar (Full width edge-to-edge) */}
         <header className='w-full px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 pt-6 sm:pt-8 flex items-center justify-between relative z-30'>
           
-          {/* Brand Wordmark - Prominent Editorial Serif */}
-          <Link href='/' className='flex items-center gap-1 group'>
-            <span className='font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-medium tracking-tight text-[#1C1917] hover:opacity-85 transition-opacity'>
-              Roamio
-            </span>
+          {/* Brand Identity / Bespoke Luxury Logo */}
+          <Link href='/' className='flex items-center gap-3 group'>
+            {/* Compass Insignia Medallion */}
+            <div className='relative w-11 h-11 rounded-2xl bg-white/55 backdrop-blur-xl border border-white/80 shadow-[0_4px_16px_rgba(45,32,20,0.08),inset_0_1px_1.5px_rgba(255,255,255,0.95)] flex items-center justify-center group-hover:scale-105 group-hover:shadow-[0_8px_24px_rgba(217,119,66,0.3)] transition-all duration-300'>
+              <svg viewBox='0 0 32 32' className='w-6 h-6' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <defs>
+                  <linearGradient id='roamio-gold' x1='0%' y1='0%' x2='100%' y2='100%'>
+                    <stop offset='0%' stopColor='#F8E6D2' />
+                    <stop offset='45%' stopColor='#D97742' />
+                    <stop offset='100%' stopColor='#A84E25' />
+                  </linearGradient>
+                </defs>
+                {/* Outer Celestial Meridian Ring */}
+                <circle cx='16' cy='16' r='13' stroke='url(#roamio-gold)' strokeWidth='1.2' strokeDasharray='2 2' opacity='0.75' />
+                {/* Inner Compass Orbit Ring */}
+                <circle cx='16' cy='16' r='9.5' stroke='#1C1917' strokeWidth='0.8' opacity='0.3' />
+                {/* 8-Point Navigation Star */}
+                <path d='M16 3 L18 13 L28 16 L18 19 L16 29 L14 19 L4 16 L14 13 Z' fill='url(#roamio-gold)' />
+                {/* Center Diamond Jewel */}
+                <circle cx='16' cy='16' r='2' fill='#FFFFFF' stroke='#1C1917' strokeWidth='0.8' />
+              </svg>
+            </div>
+
+            {/* Typographic Wordmark & Atelier Caption */}
+            <div className='flex flex-col'>
+              <div className='flex items-baseline gap-1'>
+                <span className='font-cormorant text-3xl sm:text-4xl lg:text-[2.65rem] font-semibold tracking-[-0.015em] text-[#1C1917] leading-none group-hover:opacity-90 transition-opacity'>
+                  Roamio
+                </span>
+                <span className='w-1.5 h-1.5 rounded-full bg-[#D97742] mb-0.5' />
+              </div>
+              <span className='text-[9px] font-mono tracking-[0.3em] text-[#8C5D3D] uppercase font-semibold leading-tight mt-0.5'>
+                Travel Atelier
+              </span>
+            </div>
           </Link>
 
-          {/* Centered Translucent Frosted Pill Navigation - Larger & More Legible */}
-          <nav className='hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/45 backdrop-blur-md border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)]'>
+          {/* Centered Ultra-Glassmorphic Floating Pill Navigation */}
+          <nav className='hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full glass-pill'>
             <button
               type='button'
               onClick={() => setActiveNav('features')}
-              className={`text-sm sm:text-[15px] font-semibold px-5 py-2 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] px-5 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'features'
-                  ? 'bg-white text-[#1C1917] shadow-sm'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'glass-pill-active text-[#1C1917] font-semibold'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917] hover:bg-white/40 font-medium'
               }`}
             >
               Features
@@ -140,10 +170,10 @@ export default function HomePage() {
                 setActiveNav('navigation')
                 document.getElementById('destinations')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'navigation'
-                  ? 'bg-white text-[#1C1917] shadow-sm'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'glass-pill-active text-[#1C1917] font-semibold'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917] hover:bg-white/40 font-medium'
               }`}
             >
               Navigation
@@ -154,10 +184,10 @@ export default function HomePage() {
                 setActiveNav('prices')
                 document.getElementById('scenarios')?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'prices'
-                  ? 'bg-white text-[#1C1917] shadow-sm'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'glass-pill-active text-[#1C1917] font-semibold'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917] hover:bg-white/40 font-medium'
               }`}
             >
               Prices
@@ -168,10 +198,10 @@ export default function HomePage() {
                 setActiveNav('stories')
                 router.push('/trips')
               }}
-              className={`text-sm sm:text-[15px] font-medium px-4 py-2 rounded-full transition-all cursor-pointer ${
+              className={`text-sm sm:text-[15px] px-4 py-2 rounded-full transition-all cursor-pointer ${
                 activeNav === 'stories'
-                  ? 'bg-white text-[#1C1917] shadow-sm'
-                  : 'text-[#3D352E] hover:text-[#1C1917]'
+                  ? 'glass-pill-active text-[#1C1917] font-semibold'
+                  : 'text-[#3D352E]/90 hover:text-[#1C1917] hover:bg-white/40 font-medium'
               }`}
             >
               Stories
@@ -179,17 +209,17 @@ export default function HomePage() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className='flex items-center gap-3 sm:gap-5'>
+          <div className='flex items-center gap-3 sm:gap-4'>
             <Link
               href='/login'
-              className='text-sm sm:text-[15px] font-medium text-[#1C1917] hover:opacity-75 transition-opacity px-3 py-2'
+              className='text-sm sm:text-[15px] font-medium text-[#1C1917] hover:bg-white/50 px-4 py-2 rounded-full transition-all backdrop-blur-sm'
             >
               Log in
             </Link>
 
             <Link
               href='/new'
-              className='bg-gradient-to-r from-[#D97742] to-[#C25E2E] hover:from-[#E2834E] hover:to-[#CF6938] text-white text-sm sm:text-[15px] font-semibold px-6 py-2.5 rounded-full shadow-[0_4px_18px_rgba(217,119,66,0.4)] hover:shadow-[0_6px_24px_rgba(217,119,66,0.5)] transition-all cursor-pointer'
+              className='glass-pill-btn hover:brightness-105 text-white text-sm sm:text-[15px] font-semibold px-6 py-2.5 rounded-full transition-all cursor-pointer'
             >
               Sign Up
             </Link>
@@ -201,11 +231,13 @@ export default function HomePage() {
         <div className='w-full px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 relative z-20 my-auto py-12 sm:py-16 lg:py-20'>
           <div className='max-w-3xl space-y-3'>
             
-            {/* Headline matching reference image, edge-anchored & commanding */}
-            <h1 className='font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem] font-normal tracking-tight text-[#1C1917] leading-[1.08]'>
-              <span className='block sm:whitespace-nowrap'>Every journey has a story.</span>
+            {/* Elevated Haute-Couture Display Headline */}
+            <h1 className='font-cormorant text-5xl sm:text-6xl md:text-7xl lg:text-[5.4rem] xl:text-[6.2rem] font-normal tracking-[-0.025em] text-[#1C1917] leading-[1.02]'>
+              <span className='block sm:whitespace-nowrap'>
+                Every journey has a <span className='italic font-light text-[#2A1D15]'>story.</span>
+              </span>
               <span className='block font-normal mt-1 sm:whitespace-nowrap'>
-                Let&apos;s write yours.
+                Let&apos;s write <span className='italic font-light text-[#A84E25]'>yours.</span>
               </span>
             </h1>
 

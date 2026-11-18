@@ -59,11 +59,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className='max-w-7xl mx-auto px-4 sm:px-8'>
           <div className='flex h-20 items-center justify-between'>
             
-            {/* Brand */}
-            <Link href='/' className='flex items-center gap-2 group'>
-              <span className='font-serif text-3xl font-normal tracking-tight text-white hover:opacity-90 transition-opacity'>
-                Roamio
-              </span>
+            {/* Brand Identity / Bespoke Luxury Logo */}
+            <Link href='/' className='flex items-center gap-3 group'>
+              <div className='relative w-9 h-9 rounded-xl bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm flex items-center justify-center group-hover:scale-105 group-hover:border-[#D97742]/40 transition-all duration-300'>
+                <svg viewBox='0 0 32 32' className='w-5 h-5' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <defs>
+                    <linearGradient id='roamio-gold-dash' x1='0%' y1='0%' x2='100%' y2='100%'>
+                      <stop offset='0%' stopColor='#F8E6D2' />
+                      <stop offset='45%' stopColor='#D97742' />
+                      <stop offset='100%' stopColor='#A84E25' />
+                    </linearGradient>
+                  </defs>
+                  <circle cx='16' cy='16' r='13' stroke='url(#roamio-gold-dash)' strokeWidth='1.2' strokeDasharray='2 2' opacity='0.75' />
+                  <circle cx='16' cy='16' r='9.5' stroke='#FFFFFF' strokeWidth='0.8' opacity='0.3' />
+                  <path d='M16 3 L18 13 L28 16 L18 19 L16 29 L14 19 L4 16 L14 13 Z' fill='url(#roamio-gold-dash)' />
+                  <circle cx='16' cy='16' r='2' fill='#FFFFFF' stroke='#151B26' strokeWidth='0.8' />
+                </svg>
+              </div>
+              <div className='flex flex-col'>
+                <div className='flex items-baseline gap-1'>
+                  <span className='font-cormorant text-2xl sm:text-3xl font-semibold tracking-tight text-white hover:opacity-90 transition-opacity'>
+                    Roamio
+                  </span>
+                  <span className='w-1.5 h-1.5 rounded-full bg-[#D97742] mb-0.5' />
+                </div>
+                <span className='text-[8px] font-mono tracking-[0.25em] text-[#E5A882] uppercase font-semibold leading-none'>
+                  Travel Atelier
+                </span>
+              </div>
             </Link>
 
             {/* Nav Items */}
